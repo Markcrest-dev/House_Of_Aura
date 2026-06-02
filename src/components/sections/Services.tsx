@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Scissors, Sparkles, Palette, CircleDot, Brush, User } from 'lucide-react'
-import { gsap, ScrollTrigger } from '../../lib/gsap'
+import { gsap } from '../../lib/gsap'
 
 const services = [
   {

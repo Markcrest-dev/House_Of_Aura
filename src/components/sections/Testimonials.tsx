@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Star } from 'lucide-react'
-import { gsap, ScrollTrigger } from '../../lib/gsap'
+import { gsap } from '../../lib/gsap'
 
 const testimonials = [
   { quote: 'I walked in feeling ordinary. I walked out feeling like I had a presence. That\'s the Aura effect.', name: 'Amara J.', service: 'Precision Cut & Styling', stars: 5 },

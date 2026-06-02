@@ -39,7 +39,6 @@ function SliderItem({ item }: { item: typeof transformations[0] }) {
   }, [])
 
   const handleMouseDown = () => setIsDragging(true)
-  const handleMouseUp = () => setIsDragging(false)
 
   useEffect(() => {
     const handleGlobalMove = (e: MouseEvent) => {

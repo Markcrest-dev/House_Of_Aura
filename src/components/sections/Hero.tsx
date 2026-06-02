@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { ArrowDown } from 'lucide-react'
-import { gsap, ScrollTrigger } from '../../lib/gsap'
+import { gsap } from '../../lib/gsap'
 import Button from '../ui/Button'
 import SplitText from '../ui/SplitText'
 
