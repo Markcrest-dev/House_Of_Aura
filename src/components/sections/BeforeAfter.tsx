@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
+import { gsap } from '../../lib/gsap'
 
 const transformations = [
   {
@@ -195,23 +196,24 @@ function SliderItem({ item }: { item: typeof transformations[0] }) {
 }
 
 export default function BeforeAfter() {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+  const titleRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true)
-      },
-      { threshold: 0.2 }
-    )
-    if (sectionRef.current) observer.observe(sectionRef.current)
-    return () => observer.disconnect()
+    if (!titleRef.current) return
+    const ctx = gsap.context(() => {
+      gsap.from(titleRef.current!.children, {
+        opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: titleRef.current, start: 'top 80%' },
+      })
+    })
+    return () => ctx.revert()
   }, [])
 
   return (
     <section
       id="gallery"
+      ref={sectionRef}
       style={{
         padding: 'var(--space-16) 0',
         backgroundColor: 'var(--color-surface)',
@@ -219,7 +221,6 @@ export default function BeforeAfter() {
       }}
     >
       <div
-        ref={sectionRef}
         style={{
           maxWidth: '1400px',
           margin: '0 auto',
@@ -228,12 +229,10 @@ export default function BeforeAfter() {
       >
         {/* Section Header */}
         <div
+          ref={titleRef}
           style={{
             textAlign: 'center',
             marginBottom: 'var(--space-12)',
-            opacity: isVisible ? 1 : 0,
-            transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-            transition: `all 0.8s var(--ease-luxury)`,
           }}
         >
           <span

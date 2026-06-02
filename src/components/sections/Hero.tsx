@@ -1,27 +1,95 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { ArrowDown } from 'lucide-react'
+import { gsap, ScrollTrigger } from '../../lib/gsap'
 import Button from '../ui/Button'
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null)
   const headlineRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const bgRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Staggered entrance animation
-    const timer = setTimeout(() => setIsLoaded(true), 300)
-    return () => clearTimeout(timer)
+    const ctx = gsap.context(() => {
+      // Timeline for entrance sequence
+      const tl = gsap.timeline({ delay: 0.3 })
+
+      // Character reveal for headline
+      if (headlineRef.current) {
+        const chars = headlineRef.current.querySelectorAll('.hero-char')
+        tl.from(chars, {
+          opacity: 0,
+          y: 60,
+          rotationX: -90,
+          stagger: 0.03,
+          duration: 0.9,
+          ease: 'back.out(1.7)',
+        })
+      }
+
+      // Subtitle fade in
+      tl.from(subtitleRef.current, {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        ease: 'power3.out',
+      }, '-=0.4')
+
+      // CTA fade in
+      tl.from(ctaRef.current, {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: 'power3.out',
+      }, '-=0.6')
+
+      // Scroll indicator
+      tl.from(scrollRef.current, {
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.out',
+      }, '-=0.3')
+
+      // Parallax on scroll — background moves slower
+      if (bgRef.current) {
+        gsap.to(bgRef.current, {
+          yPercent: 25,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        })
+      }
+
+      // Fade out content on scroll
+      gsap.to([headlineRef.current, subtitleRef.current, ctaRef.current], {
+        opacity: 0,
+        y: -40,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: '60% top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
   }, [])
 
-  // Character-by-character reveal for headline
   const headlineText = 'House of Aura.'
   const subtitleText = 'Where presence is crafted.'
 
   return (
     <section
       id="hero"
+      ref={sectionRef}
       style={{
         position: 'relative',
         width: '100%',
@@ -33,15 +101,15 @@ export default function Hero() {
         overflow: 'hidden',
       }}
     >
-      {/* Video / Background Layer */}
+      {/* Background Layer — parallax */}
       <div
+        ref={bgRef}
         style={{
           position: 'absolute',
-          inset: 0,
+          inset: '-20% 0',
           zIndex: 0,
         }}
       >
-        {/* Cinematic gradient background — will be replaced with video */}
         <div
           style={{
             position: 'absolute',
@@ -53,7 +121,7 @@ export default function Hero() {
             `,
           }}
         />
-        {/* Video overlay gradient — per build plan spec */}
+        {/* Video overlay gradient */}
         <div
           style={{
             position: 'absolute',
@@ -74,7 +142,7 @@ export default function Hero() {
           padding: '0 var(--space-4)',
         }}
       >
-        {/* Headline — character by character */}
+        {/* Headline — characters wrapped for GSAP */}
         <h1
           ref={headlineRef}
           style={{
@@ -90,12 +158,9 @@ export default function Hero() {
           {headlineText.split('').map((char, i) => (
             <span
               key={i}
+              className="hero-char"
               style={{
                 display: 'inline-block',
-                opacity: isLoaded ? 1 : 0,
-                transform: isLoaded ? 'translateY(0) rotateX(0)' : 'translateY(60px) rotateX(-90deg)',
-                transition: `all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1)`,
-                transitionDelay: `${0.5 + i * 0.03}s`,
                 whiteSpace: char === ' ' ? 'pre' : 'normal',
               }}
             >
@@ -112,10 +177,6 @@ export default function Hero() {
             fontSize: 'clamp(20px, 3vw, 36px)',
             fontWeight: 300,
             color: 'var(--color-text)',
-            opacity: isLoaded ? 1 : 0,
-            transform: isLoaded ? 'translateY(0)' : 'translateY(30px)',
-            transition: `all 1s var(--ease-luxury)`,
-            transitionDelay: '1.2s',
             marginBottom: 'var(--space-8)',
             fontStyle: 'italic',
           }}
@@ -124,15 +185,7 @@ export default function Hero() {
         </p>
 
         {/* CTA */}
-        <div
-          ref={ctaRef}
-          style={{
-            opacity: isLoaded ? 1 : 0,
-            transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
-            transition: `all 0.8s var(--ease-luxury)`,
-            transitionDelay: '1.6s',
-          }}
-        >
+        <div ref={ctaRef}>
           <Button
             size="lg"
             onClick={() => {
@@ -157,12 +210,8 @@ export default function Hero() {
           flexDirection: 'column',
           alignItems: 'center',
           gap: '12px',
-          opacity: isLoaded ? 1 : 0,
-          transition: `opacity 1s ease`,
-          transitionDelay: '2s',
         }}
       >
-        {/* Thin vertical line */}
         <div
           style={{
             width: '1px',
@@ -182,7 +231,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll bounce keyframe */}
       <style>{`
         @keyframes scrollBounce {
           0%, 100% { transform: translateY(0); }

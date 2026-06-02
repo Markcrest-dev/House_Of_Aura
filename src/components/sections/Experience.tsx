@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { gsap, ScrollTrigger } from '../../lib/gsap'
 
 const lines = [
   'Complimentary drinks on arrival.',
@@ -11,115 +12,109 @@ const lines = [
 
 export default function Experience() {
   const sectionRef = useRef<HTMLElement>(null)
-  const [visibleLines, setVisibleLines] = useState(0)
-  const [isInView, setIsInView] = useState(false)
+  const pinRef = useRef<HTMLDivElement>(null)
+  const lineRefs = useRef<(HTMLParagraphElement | null)[]>([])
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting)
-      },
-      { threshold: 0.5 }
-    )
-    if (sectionRef.current) observer.observe(sectionRef.current)
-    return () => observer.disconnect()
+    const ctx = gsap.context(() => {
+      // Pin the section
+      const pin = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: `+=${lines.length * 300}`,
+        pin: pinRef.current,
+        pinSpacing: true,
+      })
+
+      // Reveal each line based on scroll progress
+      lineRefs.current.forEach((line, i) => {
+        if (!line) return
+        gsap.set(line, { opacity: 0.08, y: 12 })
+
+        gsap.to(line, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: `top+=${i * 300} top`,
+            end: `top+=${(i + 1) * 300} top`,
+            toggleActions: 'play none none reverse',
+          },
+        })
+      })
+
+      return () => pin.kill()
+    }, sectionRef)
+
+    return () => ctx.revert()
   }, [])
-
-  useEffect(() => {
-    if (!isInView) return
-
-    const handleScroll = () => {
-      if (!sectionRef.current) return
-      const rect = sectionRef.current.getBoundingClientRect()
-      const progress = Math.max(0, Math.min(1, 1 - (rect.bottom - window.innerHeight) / rect.height))
-      const lineCount = Math.floor(progress * (lines.length + 1))
-      setVisibleLines(Math.min(lineCount, lines.length))
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [isInView])
 
   return (
     <section
       id="experience"
       ref={sectionRef}
       style={{
-        minHeight: '100vh',
         backgroundColor: 'var(--color-bg)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 'var(--space-16) var(--space-4)',
         position: 'relative',
       }}
     >
-      {/* Subtle ambient glow */}
       <div
+        ref={pinRef}
         style={{
-          position: 'absolute',
-          inset: 0,
-          background: `
-            radial-gradient(ellipse at 50% 50%, rgba(212, 168, 92, 0.03) 0%, transparent 60%)
-          `,
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div
-        style={{
-          maxWidth: '800px',
-          width: '100%',
-          textAlign: 'center',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 'var(--space-16) var(--space-4)',
           position: 'relative',
-          zIndex: 1,
         }}
       >
-        <span
+        {/* Subtle ambient glow */}
+        <div
           style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '12px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: 'var(--color-gold)',
-            display: 'block',
-            marginBottom: 'var(--space-8)',
-            opacity: visibleLines > 0 ? 1 : 0.3,
-            transition: 'opacity 0.6s ease',
+            position: 'absolute',
+            inset: 0,
+            background: 'radial-gradient(ellipse at 50% 50%, rgba(212, 168, 92, 0.03) 0%, transparent 60%)',
+            pointerEvents: 'none',
           }}
-        >
-          The Experience
-        </span>
+        />
 
-        {lines.map((line, index) => {
-          const isLineVisible = index < visibleLines
-          const isLastLine = index === lines.length - 1
+        <div style={{ maxWidth: '800px', width: '100%', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          <span style={{
+            fontFamily: 'var(--font-body)', fontSize: '12px', letterSpacing: '0.2em',
+            textTransform: 'uppercase', color: 'var(--color-gold)', display: 'block',
+            marginBottom: 'var(--space-8)',
+          }}>
+            The Experience
+          </span>
 
-          if (line === '') {
-            return <div key={index} style={{ height: 'var(--space-6)' }} />
-          }
+          {lines.map((line, index) => {
+            const isLastLine = index === lines.length - 1
 
-          return (
-            <p
-              key={index}
-              style={{
-                fontFamily: isLastLine ? 'var(--font-display)' : 'var(--font-sub)',
-                fontSize: isLastLine ? 'clamp(28px, 4vw, 48px)' : 'clamp(22px, 3vw, 36px)',
-                fontWeight: isLastLine ? 700 : 300,
-                color: isLastLine ? 'var(--color-heading)' : 'var(--color-text)',
-                lineHeight: 1.5,
-                marginBottom: 'var(--space-4)',
-                opacity: isLineVisible ? 1 : 0.08,
-                transform: isLineVisible ? 'translateY(0)' : 'translateY(12px)',
-                transition: `all 0.8s var(--ease-luxury)`,
-                transitionDelay: '0.1s',
-              }}
-            >
-              {line}
-            </p>
-          )
-        })}
+            if (line === '') {
+              return <div key={index} style={{ height: 'var(--space-6)' }} />
+            }
+
+            return (
+              <p
+                key={index}
+                ref={el => { lineRefs.current[index] = el }}
+                style={{
+                  fontFamily: isLastLine ? 'var(--font-display)' : 'var(--font-sub)',
+                  fontSize: isLastLine ? 'clamp(28px, 4vw, 48px)' : 'clamp(22px, 3vw, 36px)',
+                  fontWeight: isLastLine ? 700 : 300,
+                  color: isLastLine ? 'var(--color-heading)' : 'var(--color-text)',
+                  lineHeight: 1.5,
+                  marginBottom: 'var(--space-4)',
+                }}
+              >
+                {line}
+              </p>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

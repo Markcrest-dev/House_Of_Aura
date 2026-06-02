@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Instagram, Clock } from 'lucide-react'
+import { MapPin, Phone, Mail, ExternalLink, Clock } from 'lucide-react'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -202,7 +202,7 @@ export default function Footer() {
               onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--color-gold)' }}
               onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--color-text-muted)' }}
             >
-              <Instagram size={18} strokeWidth={1.5} />
+              <ExternalLink size={18} strokeWidth={1.5} />
             </a>
           </div>
         </div>

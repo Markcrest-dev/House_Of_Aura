@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Scissors, Sparkles, Palette, CircleDot, Brush, User } from 'lucide-react'
+import { gsap, ScrollTrigger } from '../../lib/gsap'
 
 const services = [
   {
@@ -42,21 +43,24 @@ const services = [
 
 function ServiceCard({ service, index }: { service: typeof services[0]; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => setIsVisible(true), index * 120)
-        }
-      },
-      { threshold: 0.2 }
-    )
-
-    if (cardRef.current) observer.observe(cardRef.current)
-    return () => observer.disconnect()
+    const ctx = gsap.context(() => {
+      gsap.from(cardRef.current, {
+        opacity: 0,
+        y: 50,
+        duration: 0.7,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+        delay: index * 0.12,
+      })
+    })
+    return () => ctx.revert()
   }, [index])
 
   const IconComponent = service.icon
@@ -72,12 +76,8 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
         padding: 'var(--space-6) var(--space-4)',
         position: 'relative',
         overflow: 'hidden',
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(40px)',
-        transition: `all var(--duration-base) var(--ease-luxury)`,
       }}
     >
-      {/* Icon */}
       <div style={{ marginBottom: 'var(--space-3)' }}>
         <IconComponent
           size={24}
@@ -88,152 +88,81 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
           }}
         />
       </div>
-
-      {/* Service Name */}
-      <h3
-        style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: '22px',
-          fontWeight: 600,
-          color: 'var(--color-heading)',
-          marginBottom: 'var(--space-2)',
-          letterSpacing: '-0.01em',
-        }}
-      >
+      <h3 style={{
+        fontFamily: 'var(--font-display)', fontSize: '22px', fontWeight: 600,
+        color: 'var(--color-heading)', marginBottom: 'var(--space-2)', letterSpacing: '-0.01em',
+      }}>
         {service.name}
       </h3>
-
-      {/* Description */}
-      <p
-        style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: '14px',
-          color: 'var(--color-text-muted)',
-          lineHeight: 1.7,
-          fontWeight: 300,
-          marginBottom: 'var(--space-3)',
-        }}
-      >
+      <p style={{
+        fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--color-text-muted)',
+        lineHeight: 1.7, fontWeight: 300, marginBottom: 'var(--space-3)',
+      }}>
         {service.description}
       </p>
-
-      {/* Price */}
-      <span
-        style={{
-          fontFamily: 'var(--font-sub)',
-          fontSize: '16px',
-          color: 'var(--color-gold)',
-          fontWeight: 400,
-          fontStyle: 'italic',
-        }}
-      >
+      <span style={{
+        fontFamily: 'var(--font-sub)', fontSize: '16px', color: 'var(--color-gold)',
+        fontWeight: 400, fontStyle: 'italic',
+      }}>
         {service.price}
       </span>
-
       {/* Hover underline — slides in from left */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          height: '2px',
-          backgroundColor: 'var(--color-gold)',
-          width: isHovered ? '100%' : '0%',
-          transition: `width var(--duration-base) var(--ease-luxury)`,
-        }}
-      />
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, height: '2px',
+        backgroundColor: 'var(--color-gold)',
+        width: isHovered ? '100%' : '0%',
+        transition: `width var(--duration-base) var(--ease-luxury)`,
+      }} />
     </div>
   )
 }
 
 export default function Services() {
+  const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
-  const [titleVisible, setTitleVisible] = useState(false)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setTitleVisible(true)
-      },
-      { threshold: 0.3 }
-    )
-    if (titleRef.current) observer.observe(titleRef.current)
-    return () => observer.disconnect()
+    const ctx = gsap.context(() => {
+      // Title entrance
+      gsap.from(titleRef.current!.children, {
+        opacity: 0,
+        y: 40,
+        stagger: 0.15,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: titleRef.current,
+          start: 'top 80%',
+        },
+      })
+    }, sectionRef)
+    return () => ctx.revert()
   }, [])
 
   return (
-    <section
-      id="services"
-      style={{
-        padding: 'var(--space-16) 0',
-        backgroundColor: 'var(--color-bg)',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: '0 var(--space-4)',
-        }}
-      >
-        {/* Section Header */}
-        <div
-          ref={titleRef}
-          style={{
-            textAlign: 'center',
-            marginBottom: 'var(--space-12)',
-            opacity: titleVisible ? 1 : 0,
-            transform: titleVisible ? 'translateY(0)' : 'translateY(30px)',
-            transition: `all 0.8s var(--ease-luxury)`,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '12px',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: 'var(--color-gold)',
-              display: 'block',
-              marginBottom: 'var(--space-2)',
-            }}
-          >
-            Signature Services
-          </span>
-          <h2
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(36px, 5vw, 64px)',
-              fontWeight: 700,
-              color: 'var(--color-heading)',
-              marginBottom: 'var(--space-3)',
-            }}
-          >
-            The Craft
-          </h2>
-          <p
-            style={{
-              fontFamily: 'var(--font-sub)',
-              fontSize: 'clamp(16px, 2vw, 22px)',
-              color: 'var(--color-text-muted)',
-              fontWeight: 300,
-              fontStyle: 'italic',
-              maxWidth: '600px',
-              margin: '0 auto',
-            }}
-          >
+    <section id="services" ref={sectionRef} style={{ padding: 'var(--space-16) 0', backgroundColor: 'var(--color-bg)' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 var(--space-4)' }}>
+        <div ref={titleRef} style={{ textAlign: 'center', marginBottom: 'var(--space-12)' }}>
+          <span style={{
+            fontFamily: 'var(--font-body)', fontSize: '12px', letterSpacing: '0.2em',
+            textTransform: 'uppercase', color: 'var(--color-gold)', display: 'block',
+            marginBottom: 'var(--space-2)',
+          }}>Signature Services</span>
+          <h2 style={{
+            fontFamily: 'var(--font-display)', fontSize: 'clamp(36px, 5vw, 64px)',
+            fontWeight: 700, color: 'var(--color-heading)', marginBottom: 'var(--space-3)',
+          }}>The Craft</h2>
+          <p style={{
+            fontFamily: 'var(--font-sub)', fontSize: 'clamp(16px, 2vw, 22px)',
+            color: 'var(--color-text-muted)', fontWeight: 300, fontStyle: 'italic',
+            maxWidth: '600px', margin: '0 auto',
+          }}>
             Every service begins with listening. We understand your vision before we touch your hair.
           </p>
         </div>
-
-        {/* Service Cards Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-            gap: 'var(--space-3)',
-          }}
-        >
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 'var(--space-3)',
+        }}>
           {services.map((service, index) => (
             <ServiceCard key={service.name} service={service} index={index} />
           ))}
