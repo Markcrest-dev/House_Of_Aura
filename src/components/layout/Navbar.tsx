@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const navLinks = [
   { label: 'Services', href: '#services' },
@@ -13,6 +14,8 @@ const navLinks = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,11 +27,34 @@ export default function Navbar() {
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault()
-    const target = document.querySelector(href)
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' })
+    
+    if (href === '#booking') {
+      navigate('/booking')
+      setIsMobileOpen(false)
+      return
+    }
+    
+    if (location.pathname !== '/') {
+      navigate('/')
+      setTimeout(() => {
+        const target = document.querySelector(href)
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+    } else {
+      const target = document.querySelector(href)
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' })
+      }
     }
     setIsMobileOpen(false)
+  }
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    navigate('/')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
@@ -62,6 +88,7 @@ export default function Navbar() {
           {/* Logo */}
           <a
             href="#"
+            onClick={handleLogoClick}
             style={{
               fontFamily: 'var(--font-display)',
               fontSize: '24px',

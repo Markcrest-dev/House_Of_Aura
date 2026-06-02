@@ -22,9 +22,10 @@ const artists = [
   },
 ]
 
+import ImageReveal from '../ui/ImageReveal'
+
 function ArtistCard({ artist, index }: { artist: typeof artists[0]; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const imageRef = useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
@@ -41,20 +42,6 @@ function ArtistCard({ artist, index }: { artist: typeof artists[0]; index: numbe
           start: 'top 85%',
         },
       })
-
-      // Image clip-path reveal
-      if (imageRef.current) {
-        gsap.from(imageRef.current, {
-          clipPath: 'inset(0 100% 0 0)',
-          duration: 1.4,
-          ease: 'expo.inOut',
-          delay: index * 0.2 + 0.2,
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: 'top 80%',
-          },
-        })
-      }
     })
     return () => ctx.revert()
   }, [index])
@@ -68,28 +55,31 @@ function ArtistCard({ artist, index }: { artist: typeof artists[0]; index: numbe
       onMouseLeave={() => setIsHovered(false)}
       style={{ position: 'relative', overflow: 'hidden', aspectRatio: '3/4' }}
     >
-      <div
-        ref={imageRef}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundColor: 'var(--color-surface)',
-          background: `radial-gradient(ellipse at center, ${artist.accentColor} 0%, var(--color-surface) 70%)`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          filter: isHovered ? 'grayscale(0) brightness(1.1)' : 'grayscale(0.8) brightness(0.9)',
-          transition: 'filter 0.6s var(--ease-luxury)',
-        }}
-      >
-        <span style={{
-          fontFamily: 'var(--font-display)', fontSize: '80px', fontWeight: 700,
-          color: isHovered ? 'var(--color-gold)' : 'var(--color-border)',
-          transition: 'color 0.6s var(--ease-luxury)', opacity: 0.4,
-        }}>
-          {initials}
-        </span>
-      </div>
+      <ImageReveal delay={index * 0.2 + 0.2}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: 'var(--color-surface)',
+            background: `radial-gradient(ellipse at center, ${artist.accentColor} 0%, var(--color-surface) 70%)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            filter: isHovered ? 'grayscale(0) brightness(1.1)' : 'grayscale(0.8) brightness(0.9)',
+            transition: 'filter 0.6s var(--ease-luxury)',
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <span style={{
+            fontFamily: 'var(--font-display)', fontSize: '80px', fontWeight: 700,
+            color: isHovered ? 'var(--color-gold)' : 'var(--color-border)',
+            transition: 'color 0.6s var(--ease-luxury)', opacity: 0.4,
+          }}>
+            {initials}
+          </span>
+        </div>
+      </ImageReveal>
 
       {/* Bottom gradient */}
       <div style={{

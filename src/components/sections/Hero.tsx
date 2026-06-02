@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { ArrowDown } from 'lucide-react'
 import { gsap, ScrollTrigger } from '../../lib/gsap'
 import Button from '../ui/Button'
+import SplitText from '../ui/SplitText'
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -155,18 +156,7 @@ export default function Hero() {
             letterSpacing: '-0.02em',
           }}
         >
-          {headlineText.split('').map((char, i) => (
-            <span
-              key={i}
-              className="hero-char"
-              style={{
-                display: 'inline-block',
-                whiteSpace: char === ' ' ? 'pre' : 'normal',
-              }}
-            >
-              {char === ' ' ? '\u00A0' : char}
-            </span>
-          ))}
+          <SplitText text={headlineText} charClassName="hero-char" />
         </h1>
 
         {/* Subtitle */}
