@@ -1,15 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { gsap } from '../lib/gsap'
 
 import Hero from '../components/sections/Hero'
-import Services from '../components/sections/Services'
-import BeforeAfter from '../components/sections/BeforeAfter'
-import Experience from '../components/sections/Experience'
-import Artists from '../components/sections/Artists'
-import Products3D from '../components/sections/Products3D'
-import Testimonials from '../components/sections/Testimonials'
 import Button from '../components/ui/Button'
 import ImageReveal from '../components/ui/ImageReveal'
 
@@ -181,160 +175,11 @@ function Philosophy() {
   )
 }
 
-function BookingCTA() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLDivElement>(null)
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(textRef.current!.children, {
-        opacity: 0,
-        y: 30,
-        stagger: 0.12,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
-      })
-    })
-    return () => ctx.revert()
-  }, [])
-
-  return (
-    <section
-      ref={containerRef}
-      style={{
-        padding: 'var(--space-16) 0',
-        backgroundColor: 'var(--color-surface)',
-        borderTop: '1px solid var(--color-border)',
-        position: 'relative',
-        overflow: 'hidden',
-        textAlign: 'center',
-      }}
-    >
-      {/* Background radial glow */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '-20%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '800px',
-          height: '500px',
-          background: 'radial-gradient(circle, rgba(212, 168, 92, 0.05) 0%, transparent 70%)',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
-
-      <div
-        ref={textRef}
-        style={{
-          maxWidth: '800px',
-          margin: '0 auto',
-          padding: '0 var(--space-4)',
-          position: 'relative',
-          zIndex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 'var(--space-2)',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '12px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: 'var(--color-gold)',
-            marginBottom: 'var(--space-2)',
-          }}
-        >
-          Presence Awaits
-        </span>
-        <h2
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(36px, 5vw, 64px)',
-            fontWeight: 700,
-            color: 'var(--color-heading)',
-            marginBottom: 'var(--space-3)',
-          }}
-        >
-          Craft Your Signature
-        </h2>
-        <p
-          style={{
-            fontFamily: 'var(--font-sub)',
-            fontSize: 'clamp(16px, 2vw, 22px)',
-            color: 'var(--color-text-muted)',
-            fontWeight: 300,
-            fontStyle: 'italic',
-            maxWidth: '550px',
-            margin: '0 auto var(--space-6)',
-            lineHeight: 1.6,
-          }}
-        >
-          Experience our tailored consultation, bespoke scalp rituals, and structural cuts. Book your atelier session today.
-        </p>
-        <div>
-          <Button variant="filled" size="lg" onClick={() => navigate('/booking')}>
-            Book Your Session <Calendar size={14} style={{ marginLeft: '8px' }} />
-          </Button>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 export default function Home() {
-  const navigate = useNavigate()
-
   return (
     <main>
       <Hero />
       <Philosophy />
-      
-      {/* Services Section with inline CTA */}
-      <Services />
-      <div style={{ display: 'flex', justifyContent: 'center', backgroundColor: 'var(--color-bg)', paddingBottom: 'var(--space-16)', borderBottom: '1px solid var(--color-border)' }}>
-        <Button variant="ghost" onClick={() => navigate('/services')}>
-          Explore Full Menu <ArrowRight size={14} style={{ marginLeft: '8px' }} />
-        </Button>
-      </div>
-
-      {/* Before / After Slider Section with inline CTA */}
-      <BeforeAfter />
-      <div style={{ display: 'flex', justifyContent: 'center', backgroundColor: 'var(--color-surface)', paddingBottom: 'var(--space-16)', borderBottom: '1px solid var(--color-border)' }}>
-        <Button variant="ghost" onClick={() => navigate('/gallery')}>
-          View Transformation Gallery <ArrowRight size={14} style={{ marginLeft: '8px' }} />
-        </Button>
-      </div>
-
-      {/* Experience Section (Atelier Rituals & Aura Finder) */}
-      <Experience />
-
-      {/* Meet the Team Section with inline CTA */}
-      <Artists />
-      <div style={{ display: 'flex', justifyContent: 'center', backgroundColor: 'var(--color-bg)', paddingBottom: 'var(--space-16)', borderBottom: '1px solid var(--color-border)' }}>
-        <Button variant="ghost" onClick={() => navigate('/artists')}>
-          Match with Your Stylist <ArrowRight size={14} style={{ marginLeft: '8px' }} />
-        </Button>
-      </div>
-
-      {/* Products Section */}
-      <Products3D />
-
-      {/* Voices (Testimonials) Section */}
-      <Testimonials />
-
-      {/* Final Booking CTA */}
-      <BookingCTA />
     </main>
   )
 }
