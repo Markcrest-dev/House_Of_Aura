@@ -7,18 +7,21 @@ const artists = [
     specialty: 'Precision Cuts & Fades',
     bio: 'Ten years in the craft. Marcus reads hair like a sculptor reads stone — he finds the shape that was already there.',
     accentColor: 'rgba(212, 168, 92, 0.15)',
+    image: '/images/artists/marcus.png',
   },
   {
     name: 'Zara Chen',
     specialty: 'Braiding & Protective Styles',
     bio: 'Zara\'s braids are architecture. Every pattern tells a story, every strand has a purpose.',
     accentColor: 'rgba(155, 141, 196, 0.15)',
+    image: '/images/artists/zara.png',
   },
   {
     name: 'Kai Williams',
     specialty: 'Colour & Transformation',
     bio: 'Kai doesn\'t apply colour — he designs it. Gradients that look like they belong to your hair, not on it.',
     accentColor: 'rgba(212, 168, 92, 0.12)',
+    image: '/images/artists/kai.png',
   },
 ]
 
@@ -46,8 +49,6 @@ function ArtistCard({ artist, index }: { artist: typeof artists[0]; index: numbe
     return () => ctx.revert()
   }, [index])
 
-  const initials = artist.name.split(' ').map(n => n[0]).join('')
-
   return (
     <div
       ref={cardRef}
@@ -61,23 +62,34 @@ function ArtistCard({ artist, index }: { artist: typeof artists[0]; index: numbe
             position: 'absolute',
             inset: 0,
             backgroundColor: 'var(--color-surface)',
-            background: `radial-gradient(ellipse at center, ${artist.accentColor} 0%, var(--color-surface) 70%)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            filter: isHovered ? 'grayscale(0) brightness(1.1)' : 'grayscale(0.8) brightness(0.9)',
-            transition: 'filter 0.6s var(--ease-luxury)',
             width: '100%',
             height: '100%',
           }}
         >
-          <span style={{
-            fontFamily: 'var(--font-display)', fontSize: '80px', fontWeight: 700,
-            color: isHovered ? 'var(--color-gold)' : 'var(--color-border)',
-            transition: 'color 0.6s var(--ease-luxury)', opacity: 0.4,
-          }}>
-            {initials}
-          </span>
+          <img
+            src={artist.image}
+            alt={artist.name}
+            draggable={false}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              filter: isHovered ? 'grayscale(0) brightness(1.05)' : 'grayscale(0.85) brightness(0.8)',
+              transition: 'filter 0.6s var(--ease-luxury)',
+            }}
+          />
+          {/* Subtle gradient overlay */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: isHovered
+                ? 'radial-gradient(ellipse at center, transparent 30%, rgba(212, 168, 92, 0.05) 100%)'
+                : 'radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.2) 100%)',
+              transition: 'background 0.6s var(--ease-luxury)',
+              pointerEvents: 'none',
+            }}
+          />
         </div>
       </ImageReveal>
 

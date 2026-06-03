@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# House of Aura — Luxury Salon Web Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A cinematic, interactive, and high-performance React web application for **House of Aura**, a premier luxury salon. Built with a focus on immersive user experience (UX), premium aesthetics, fluid scroll animations, and interactive 3D elements.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🌌 **Cinematic Hero**: Large bold typography, custom character reveals, subtle background parallax, and fade-outs driven by GSAP scroll triggers.
+- ✨ **The Experience Section**: A scroll-tied narrative experience revealing core values lines sequentially on screen.
+- 💇 **Signature Services**: A structured overview of premium cuts, styling, dreadlocks, braiding, color transformations, and private consultations.
+- 🧪 **Interactive 3D Product Catalog ("Objects of Desire")**: Powered by Three.js and React Three Fiber. Features physically realistic glass refraction, gold foil accents, liquid cores, and custom environment mapping reflections.
+- 🎚️ **Drag-to-Reveal Before/After Transformations**: An intuitive image slider showing stunning side-by-side hair transitions.
+- 👥 **Meet the Artists Showcase**: Team profiles with premium, responsive image cards that transition from grayscale to full-color on hover.
+- 🗓️ **Sanity-Backed Booking & Content**: Content schema configured for services, stylists, before/after transformations, and reviews.
 
-## React Compiler
+## Technology Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework**: React 19 + Vite
+- **Language**: TypeScript
+- **Animations**: GSAP (GreenSock) + GSAP ScrollTrigger
+- **3D Graphics**: Three.js + React Three Fiber (R3F) + `@react-three/drei`
+- **Styling**: Modern CSS variables & Tailwind CSS (v4)
+- **CMS**: Sanity (Client & Image URL integration ready)
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Make sure you have Node.js (version 18 or higher) installed.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone the repository and navigate to the directory:
+   ```bash
+   cd House_Of_Aura
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Build for production:
+   ```bash
+   npm run build
+   ```
+
+## Directory Structure
+
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+├── public/                 # Static assets (images, icons, etc.)
+│   └── images/
+│       ├── artists/        # Sourced artist portrait photography
+│       └── before-after/   # Before/after transition photos
+├── src/
+│   ├── components/
+│   │   ├── sections/       # Layout sections (Hero, Services, Products3D, etc.)
+│   │   └── ui/             # Reusable UI controls (Button, ImageReveal, etc.)
+│   ├── lib/
+│   │   └── gsap.ts         # GSAP registration config
+│   ├── styles/
+│   │   └── variables.css   # Color tokens and design system tokens
+│   ├── App.tsx             # Main routing and entry layout
+│   └── main.tsx            # React application mount
+└── sanity/                 # Sanity CMS config and schemas
 ```

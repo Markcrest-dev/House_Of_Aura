@@ -6,22 +6,22 @@ const transformations = [
     id: 1,
     stylist: 'Marcus Webb',
     service: 'Precision Fade',
-    beforeColor: '#1a1520',
-    afterColor: '#2a2030',
+    beforeImage: '/images/before-after/fade-before.png',
+    afterImage: '/images/before-after/fade-after.png',
   },
   {
     id: 2,
     stylist: 'Zara Chen',
     service: 'Braiding — Fulani Style',
-    beforeColor: '#18141e',
-    afterColor: '#261e2e',
+    beforeImage: '/images/before-after/braid-before.png',
+    afterImage: '/images/before-after/braid-after.png',
   },
   {
     id: 3,
     stylist: 'Kai Williams',
     service: 'Colour — Honey Balayage',
-    beforeColor: '#151218',
-    afterColor: '#2c2226',
+    beforeImage: '/images/before-after/balayage-before.png',
+    afterImage: '/images/before-after/balayage-after.png',
   },
 ]
 
@@ -75,6 +75,7 @@ function SliderItem({ item }: { item: typeof transformations[0] }) {
         overflow: 'hidden',
         userSelect: 'none',
         flexShrink: 0,
+        cursor: 'ew-resize',
       }}
     >
       {/* Before side */}
@@ -82,22 +83,35 @@ function SliderItem({ item }: { item: typeof transformations[0] }) {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundColor: item.beforeColor,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
         }}
       >
+        <img
+          src={item.beforeImage}
+          alt={`${item.service} Before`}
+          draggable={false}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            pointerEvents: 'none',
+          }}
+        />
         <div style={{
-          textAlign: 'center',
-          opacity: 0.3,
+          position: 'absolute',
+          top: 'var(--space-4)',
+          left: 'var(--space-4)',
+          backgroundColor: 'rgba(9, 9, 14, 0.75)',
+          backdropFilter: 'blur(8px)',
+          padding: '6px 14px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
         }}>
           <span style={{
-            fontFamily: 'var(--font-sub)',
-            fontSize: '24px',
+            fontFamily: 'var(--font-body)',
+            fontSize: '11px',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
             color: 'var(--color-text)',
-            fontStyle: 'italic',
-            fontWeight: 300,
+            fontWeight: 400,
           }}>
             Before
           </span>
@@ -109,23 +123,36 @@ function SliderItem({ item }: { item: typeof transformations[0] }) {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundColor: item.afterColor,
           clipPath: `inset(0 0 0 ${sliderPos}%)`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
         }}
       >
+        <img
+          src={item.afterImage}
+          alt={`${item.service} After`}
+          draggable={false}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            pointerEvents: 'none',
+          }}
+        />
         <div style={{
-          textAlign: 'center',
-          opacity: 0.3,
+          position: 'absolute',
+          top: 'var(--space-4)',
+          right: 'var(--space-4)',
+          backgroundColor: 'rgba(212, 168, 92, 0.9)',
+          backdropFilter: 'blur(8px)',
+          padding: '6px 14px',
+          border: '1px solid rgba(212, 168, 92, 0.4)',
         }}>
           <span style={{
-            fontFamily: 'var(--font-sub)',
-            fontSize: '24px',
-            color: 'var(--color-gold)',
-            fontStyle: 'italic',
-            fontWeight: 300,
+            fontFamily: 'var(--font-body)',
+            fontSize: '11px',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'var(--color-bg)',
+            fontWeight: 600,
           }}>
             After
           </span>
