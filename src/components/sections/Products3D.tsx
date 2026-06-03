@@ -299,17 +299,17 @@ function BrushModel({ position = [0, 0, 0] as [number, number, number] }) {
     }
   })
 
-  // Pre-generate brush bristle coordinates
+  // Pre-generate brush bristle coordinates (flat layout, to be projected onto cushion)
   const bristlePositions = useMemo(() => {
     const arr = []
     const rows = 8
     const cols = 5
     for (let r = 0; r < rows; r++) {
-      const y = -0.45 + (r / (rows - 1)) * 0.9
+      const y = -0.42 + (r / (rows - 1)) * 0.84
       const factor = Math.sin((r / (rows - 1)) * Math.PI)
       const rowCols = Math.max(1, Math.round(cols * factor))
       for (let c = 0; c < rowCols; c++) {
-        const x = rowCols > 1 ? -0.22 + (c / (rowCols - 1)) * 0.44 : 0
+        const x = rowCols > 1 ? -0.2 + (c / (rowCols - 1)) * 0.4 : 0
         arr.push({ x, y })
       }
     }
@@ -319,45 +319,45 @@ function BrushModel({ position = [0, 0, 0] as [number, number, number] }) {
   return (
     <Float speed={1.4} rotationIntensity={0.2} floatIntensity={0.35}>
       <group ref={groupRef} position={position} scale={1.35}>
-        {/* Handle */}
+        {/* Handle - sleek, tapered grip */}
         <mesh position={[0, -0.85, 0]}>
-          <cylinderGeometry args={[0.07, 0.06, 0.9, 16]} />
+          <cylinderGeometry args={[0.065, 0.045, 0.9, 16]} />
           <meshStandardMaterial color="#121216" roughness={0.65} metalness={0.2} />
         </mesh>
         {/* Handle Cap in gold */}
         <mesh position={[0, -1.3, 0]}>
-          <cylinderGeometry args={[0.06, 0.07, 0.06, 16]} />
+          <cylinderGeometry args={[0.045, 0.055, 0.06, 16]} />
           <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
         </mesh>
-        {/* Gold ring connector */}
-        <mesh position={[0, -0.38, 0]}>
-          <torusGeometry args={[0.08, 0.016, 8, 16]} />
+        {/* Gold ring connector at handle neck */}
+        <mesh position={[0, -0.4, 0]}>
+          <torusGeometry args={[0.07, 0.016, 8, 16]} />
           <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
         </mesh>
 
-        {/* Back Plate (Oval Gold Plate) */}
-        <mesh position={[0, 0.15, -0.04]}>
-          <cylinderGeometry args={[0.36, 0.36, 0.1, 24]} />
+        {/* Back Plate (Oval Gold Plate facing front) */}
+        <mesh position={[0, 0.15, -0.03]} rotation={[Math.PI / 2, 0, 0]} scale={[1.15, 0.5, 1.5]}>
+          <cylinderGeometry args={[0.34, 0.34, 0.12, 32]} />
           <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
         </mesh>
         
-        {/* Rubber Cushion */}
-        <mesh position={[0, 0.15, 0.02]}>
-          <cylinderGeometry args={[0.34, 0.34, 0.04, 24]} />
+        {/* Rubber Cushion (facing front) */}
+        <mesh position={[0, 0.15, 0.01]} rotation={[Math.PI / 2, 0, 0]} scale={[1.08, 0.5, 1.42]}>
+          <cylinderGeometry args={[0.32, 0.32, 0.1, 32]} />
           <meshStandardMaterial color="#1d1d22" roughness={0.85} />
         </mesh>
 
-        {/* Bristle Pins */}
-        <group position={[0, 0.15, 0.04]}>
+        {/* Bristle Pins (projecting forwards along Z axis) */}
+        <group position={[0, 0.15, 0.05]}>
           {bristlePositions.map((pos, idx) => (
             <group key={idx} position={[pos.x, pos.y, 0]}>
-              {/* Pin shaft */}
-              <mesh position={[0, 0, 0.06]} rotation={[Math.PI / 2, 0, 0]}>
-                <cylinderGeometry args={[0.007, 0.007, 0.12, 4]} />
+              {/* Pin shaft pointing out along Z */}
+              <mesh position={[0, 0, 0.07]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.007, 0.007, 0.14, 4]} />
                 <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
               </mesh>
               {/* Ball tip */}
-              <mesh position={[0, 0, 0.12]}>
+              <mesh position={[0, 0, 0.14]}>
                 <sphereGeometry args={[0.016, 6, 6]} />
                 <meshStandardMaterial color="#121216" roughness={0.5} />
               </mesh>
@@ -436,50 +436,67 @@ function RazorModel({ position = [0, 0, 0] as [number, number, number] }) {
   return (
     <Float speed={1.6} rotationIntensity={0.3} floatIntensity={0.4}>
       <group ref={groupRef} position={position} scale={1.4} rotation={[Math.PI / 6, Math.PI / 6, 0]}>
-        {/* Handle Scale in matte black */}
-        <group position={[-0.35, -0.35, 0]} rotation={[0, 0, -Math.PI / 6]}>
-          <mesh>
-            <boxGeometry args={[1.1, 0.1, 0.06]} />
-            <meshStandardMaterial color="#1a1a24" roughness={0.7} metalness={0.1} />
+        {/* Hollow Handle (Double Scales) rotating from pivot [0, 0, 0] */}
+        <group rotation={[0, 0, -Math.PI / 3.5]}>
+          {/* Left scale plate (matte obsidian) */}
+          <mesh position={[-0.55, 0, 0.035]}>
+            <boxGeometry args={[1.1, 0.1, 0.015]} />
+            <meshStandardMaterial color="#121216" roughness={0.7} metalness={0.1} />
           </mesh>
-          {/* Gold assembly pins */}
-          <mesh position={[-0.48, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.08, 8]} />
-            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+          {/* Right scale plate (matte obsidian) */}
+          <mesh position={[-0.55, 0, -0.035]}>
+            <boxGeometry args={[1.1, 0.1, 0.015]} />
+            <meshStandardMaterial color="#121216" roughness={0.7} metalness={0.1} />
           </mesh>
-          <mesh position={[0.48, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.08, 8]} />
+          {/* Tail Spacer Block (gold) */}
+          <mesh position={[-1.05, 0, 0]}>
+            <boxGeometry args={[0.1, 0.1, 0.055]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+          {/* Tail assembly pin */}
+          <mesh position={[-1.05, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.01, 0.01, 0.1, 8]} />
             <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
           </mesh>
         </group>
 
         {/* Pivot Screw */}
         <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.028, 0.028, 0.1, 16]} />
+          <cylinderGeometry args={[0.028, 0.028, 0.11, 16]} />
           <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
         </mesh>
 
-        {/* Blade & Shank Assembly */}
-        <group position={[0.35, 0.25, 0]} rotation={[0, 0, Math.PI / 4.5]}>
+        {/* Blade & Shank Assembly rotating from pivot [0, 0, 0] */}
+        <group rotation={[0, 0, Math.PI / 5.5]}>
           {/* Gold Shank */}
-          <mesh position={[-0.35, 0, 0]}>
-            <boxGeometry args={[0.5, 0.05, 0.03]} />
+          <mesh position={[0.25, 0, 0]}>
+            <boxGeometry args={[0.5, 0.05, 0.025]} />
             <meshStandardMaterial color="#D4A85C" metalness={0.95} roughness={0.1} />
           </mesh>
-
-          {/* Steel blade body */}
-          <mesh position={[0.15, 0.06, 0]}>
-            <boxGeometry args={[0.7, 0.18, 0.012]} />
-            <meshStandardMaterial color="#e5e5e5" metalness={0.95} roughness={0.05} />
+          
+          {/* Curved Tang (finger rest) sticking out behind pivot */}
+          <mesh position={[-0.12, 0.05, 0]} rotation={[0, 0, -Math.PI / 4]}>
+            <boxGeometry args={[0.16, 0.04, 0.025]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
           </mesh>
-          {/* Bevel razor edge */}
-          <mesh position={[0.15, -0.035, 0.004]}>
-            <boxGeometry args={[0.7, 0.015, 0.004]} />
+          <mesh position={[-0.18, 0.1, 0]}>
+            <sphereGeometry args={[0.02, 8, 8]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+          </mesh>
+
+          {/* Stainless steel blade body */}
+          <mesh position={[0.7, 0.08, 0]}>
+            <boxGeometry args={[0.65, 0.18, 0.01]} />
+            <meshStandardMaterial color="#e5e5e5" metalness={0.95} roughness={0.1} />
+          </mesh>
+          {/* Polished Blade Edge Bevel */}
+          <mesh position={[0.7, -0.02, 0.003]}>
+            <boxGeometry args={[0.65, 0.02, 0.003]} />
             <meshStandardMaterial color="#ffffff" metalness={0.99} roughness={0.02} />
           </mesh>
           {/* Blade gold spine backing */}
-          <mesh position={[0.15, 0.16, 0]}>
-            <boxGeometry args={[0.72, 0.025, 0.025]} />
+          <mesh position={[0.7, 0.18, 0]}>
+            <boxGeometry args={[0.67, 0.025, 0.02]} />
             <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
           </mesh>
         </group>
