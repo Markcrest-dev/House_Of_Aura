@@ -1,16 +1,16 @@
 import { useEffect, useRef } from 'react'
-import { ArrowDown } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { gsap } from '../../lib/gsap'
 import Button from '../ui/Button'
 import SplitText from '../ui/SplitText'
 
 export default function Hero() {
+  const navigate = useNavigate()
   const sectionRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const headlineRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
   const bgRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -46,13 +46,6 @@ export default function Hero() {
         duration: 0.8,
         ease: 'power3.out',
       }, '-=0.6')
-
-      // Scroll indicator
-      tl.from(scrollRef.current, {
-        opacity: 0,
-        duration: 1,
-        ease: 'power2.out',
-      }, '-=0.3')
 
       // Parallax on scroll — background moves slower
       if (bgRef.current) {
@@ -195,54 +188,13 @@ export default function Hero() {
           <Button
             size="lg"
             onClick={() => {
-              document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })
+              navigate('/booking')
             }}
           >
             Book Your Appointment
           </Button>
         </div>
       </div>
-
-      {/* Scroll Indicator */}
-      <div
-        ref={scrollRef}
-        style={{
-          position: 'absolute',
-          bottom: '40px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '12px',
-        }}
-      >
-        <div
-          style={{
-            width: '1px',
-            height: '48px',
-            backgroundColor: 'var(--color-gold)',
-            opacity: 0.4,
-          }}
-        />
-        <div
-          style={{
-            animation: 'scrollBounce 2s infinite',
-            color: 'var(--color-gold)',
-            opacity: 0.6,
-          }}
-        >
-          <ArrowDown size={16} strokeWidth={1.5} />
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes scrollBounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(8px); }
-        }
-      `}</style>
     </section>
   )
 }
