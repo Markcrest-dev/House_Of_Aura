@@ -24,6 +24,41 @@ export default function BookingSection() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const artistParam = params.get('artist')
+    const serviceParam = params.get('service')
+
+    let matchedArtist = ''
+    let matchedService = ''
+
+    if (artistParam) {
+      const decodedArtist = decodeURIComponent(artistParam).toLowerCase().trim()
+      const found = artists.find(a => a.toLowerCase().trim() === decodedArtist)
+      if (found) matchedArtist = found
+    }
+
+    if (serviceParam) {
+      const decodedService = decodeURIComponent(serviceParam).toLowerCase().trim()
+      const found = services.find(s => s.toLowerCase().trim() === decodedService)
+      if (found) matchedService = found
+    }
+
+    if (matchedArtist || matchedService) {
+      setBooking(prev => ({
+        ...prev,
+        artist: matchedArtist || prev.artist,
+        service: matchedService || prev.service,
+      }))
+
+      if (matchedArtist && matchedService) {
+        setStep(2)
+      } else if (matchedArtist) {
+        setStep(1)
+      }
+    }
+  }, [])
+
   const canProceed = () => {
     if (step === 0) return booking.artist !== ''
     if (step === 1) return booking.service !== ''

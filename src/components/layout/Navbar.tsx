@@ -6,7 +6,7 @@ const navLinks = [
   { label: 'Services', href: '#services' },
   { label: 'Artists', href: '#artists' },
   { label: 'Gallery', href: '#gallery' },
-  { label: 'Experience', href: '#experience' },
+  { label: 'Rituals', href: '#experience' },
   { label: 'Testimonials', href: '#testimonials' },
   { label: 'Book', href: '#booking' },
 ]

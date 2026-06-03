@@ -414,8 +414,8 @@ function CombModel({ position = [0, 0, 0] as [number, number, number] }) {
         ))}
 
         {/* Comb grip details */}
-        <mesh position={[-0.75, 0.2, 0.022]}>
-          <cylinderGeometry args={[0.05, 0.05, 0.06, 16]} rotation={[Math.PI / 2, 0, 0]} />
+        <mesh position={[-0.75, 0.2, 0.022]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.05, 0.05, 0.06, 16]} />
           <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
         </mesh>
       </group>
