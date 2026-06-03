@@ -1,6 +1,7 @@
 import { useRef, useMemo, useEffect, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Float, Environment } from '@react-three/drei'
+import { useNavigate } from 'react-router-dom'
 import * as THREE from 'three'
 import { gsap } from '../../lib/gsap'
 
@@ -494,6 +495,7 @@ function RazorModel({ position = [0, 0, 0] as [number, number, number] }) {
             <boxGeometry args={[0.65, 0.02, 0.003]} />
             <meshStandardMaterial color="#ffffff" metalness={0.99} roughness={0.02} />
           </mesh>
+          
           {/* Blade gold spine backing */}
           <mesh position={[0.7, 0.18, 0]}>
             <boxGeometry args={[0.67, 0.025, 0.02]} />
@@ -511,6 +513,8 @@ const TOOLS_DATA = [
     id: 'clipper',
     name: 'AURA Pro-Alloy Clipper',
     subtitle: 'Signature Sculpting & Fading',
+    artist: 'Marcus Webb',
+    service: 'Grooming',
     description: 'Designed for master craftsmen, the AURA Pro-Alloy Clipper blends a high-torque rotary motor with our signature gold-plated carbon steel blade. It delivers ultra-close tapering, flawless fades, and runs completely cordless with absolute control.',
     specs: [
       { label: 'Blade Material', value: 'Titanium-coated Carbon Steel' },
@@ -523,6 +527,8 @@ const TOOLS_DATA = [
     id: 'dryer',
     name: 'Gold-Ion Professional Dryer',
     subtitle: 'High-Velocity Sculpting',
+    artist: 'Kai Williams',
+    service: 'Colour',
     description: 'Engineered with a brushless digital motor and dual-ion technology, the Gold-Ion Dryer delivers ultra-fast drying while locking in natural moisture. The precision concentrator nozzle concentrates gold-ion airflow to banish frizz and create sleek, high-gloss finishes.',
     specs: [
       { label: 'Motor Type', value: '110,000 RPM Brushless Digital' },
@@ -535,6 +541,8 @@ const TOOLS_DATA = [
     id: 'scissors',
     name: 'AURA Damascene Shears',
     subtitle: 'Precision Hair Sculpting',
+    artist: 'Marcus Webb',
+    service: 'Precision Cut',
     description: 'Hand-honed from premium Japanese steel, our professional shears offer surgical precision. Featuring perfectly balanced crossed blades, an adjustable tension pivot screw, and an ergonomic ring system with integrated finger rest for all-day comfort.',
     specs: [
       { label: 'Steel Grade', value: 'Japanese 440C Cobalt Stainless Steel' },
@@ -547,6 +555,8 @@ const TOOLS_DATA = [
     id: 'brush',
     name: 'AURA 24K Gold Paddle Brush',
     subtitle: 'Detangling & Scalp Revitalization',
+    artist: 'Kai Williams',
+    service: 'Consultation',
     description: 'Crafted with a polished gold backplate and a luxurious soft-touch cushion handle, this paddle brush detangles hair smoothly without pulling. Its flexible pin bristles are capped with rounded tips to massage and stimulate the scalp while redistributing natural oils.',
     specs: [
       { label: 'Base Plate', value: '24K Electroplated Gold Finish' },
@@ -559,6 +569,8 @@ const TOOLS_DATA = [
     id: 'comb',
     name: 'AURA Carbon Barber Comb',
     subtitle: 'Static-Free Detailing & Sectioning',
+    artist: 'Zara Chen',
+    service: 'Braiding',
     description: 'A dual-action styling comb featuring wide teeth for styling and fine teeth for detailing. Its anti-static carbon spine is accented by electroplated gold teeth, making it both a beautiful styling accessory and a resilient tool for precise sectioning.',
     specs: [
       { label: 'Material', value: 'Carbon Fiber & Electroplated Alloy' },
@@ -571,6 +583,8 @@ const TOOLS_DATA = [
     id: 'razor',
     name: 'AURA Luxury Straight Razor',
     subtitle: 'Signature Shaving & Outlining',
+    artist: 'Marcus Webb',
+    service: 'Grooming',
     description: 'The ultimate tool for clean outlines and wet shaving. Featuring a folding matte obsidian handle with gold pins, a surgical steel shank, and a quick-load blade holder, this straight razor combines vintage barbering heritage with contemporary luxury styling.',
     specs: [
       { label: 'Shank Material', value: 'Gold-Plated Stainless Steel' },
@@ -583,6 +597,7 @@ const TOOLS_DATA = [
 
 /* ── Main Section ── */
 export default function Products3D() {
+  const navigate = useNavigate()
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
   const [isInView, setIsInView] = useState(false)
@@ -749,6 +764,7 @@ export default function Products3D() {
               <div style={{
                 borderTop: '1px solid var(--color-border)',
                 paddingTop: 'var(--space-3)',
+                marginBottom: 'var(--space-4)',
               }}>
                 <h4 style={{
                   fontFamily: 'var(--font-body)',
@@ -763,6 +779,7 @@ export default function Products3D() {
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 'var(--space-2)',
+                  marginBottom: 'var(--space-4)',
                 }}>
                   {activeToolData.specs.map((spec, i) => (
                     <div key={i} style={{
@@ -779,6 +796,31 @@ export default function Products3D() {
                   ))}
                 </div>
               </div>
+
+              {/* Reserve/Inquire Button */}
+              <button
+                onClick={() => {
+                  const url = `/booking?artist=${encodeURIComponent(activeToolData.artist)}&service=${encodeURIComponent(activeToolData.service)}`
+                  navigate(url)
+                }}
+                style={{
+                  width: '100%',
+                  padding: '14px 20px',
+                  backgroundColor: 'rgba(212, 168, 92, 0.08)',
+                  border: '1px solid var(--color-gold)',
+                  color: 'var(--color-gold)',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '12px',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  textAlign: 'center',
+                }}
+                className="hover:bg-[var(--color-gold)] hover:text-black"
+              >
+                Reserve Tool for Appointment
+              </button>
             </div>
           </div>
 
