@@ -26,40 +26,52 @@ class AmbientSynthesizer {
     osc1.type = 'triangle'
     osc1.frequency.setValueAtTime(55, this.ctx.currentTime)
 
-    // Low Drone Oscillator 2 (E2 - 82.4Hz, perfect fifth for a stable chord)
+    // Low Drone Oscillator 2 (E2 - 82.4Hz)
     const osc2 = this.ctx.createOscillator()
     osc2.type = 'triangle'
     osc2.frequency.setValueAtTime(82.4, this.ctx.currentTime)
 
-    // Warm Mid Swell (A2 - 110Hz)
+    // Warm Mid Swell 1 (A2 - 110Hz)
     const osc3 = this.ctx.createOscillator()
     osc3.type = 'sine'
     osc3.frequency.setValueAtTime(110, this.ctx.currentTime)
 
-    // Lowpass filter for the oscillators to keep it dark and warm
+    // Warm Mid Swell 2 (E3 - 164.8Hz) - Added for audibility on standard speakers
+    const osc4 = this.ctx.createOscillator()
+    osc4.type = 'sine'
+    osc4.frequency.setValueAtTime(164.8, this.ctx.currentTime)
+
+    // Warm Mid Swell 3 (A3 - 220Hz) - Added for audibility on standard speakers
+    const osc5 = this.ctx.createOscillator()
+    osc5.type = 'sine'
+    osc5.frequency.setValueAtTime(220, this.ctx.currentTime)
+
+    // Lowpass filter for the oscillators (adjusted cutoff to 350Hz to allow mid harmonics)
     const filter = this.ctx.createBiquadFilter()
     filter.type = 'lowpass'
-    filter.frequency.setValueAtTime(180, this.ctx.currentTime)
-    filter.Q.setValueAtTime(1.5, this.ctx.currentTime)
+    filter.frequency.setValueAtTime(350, this.ctx.currentTime)
+    filter.Q.setValueAtTime(1.2, this.ctx.currentTime)
 
-    // LFO to slowly sweep the lowpass filter frequency (breathing effect)
+    // LFO to slowly sweep the lowpass filter frequency (breathing effect between ~230Hz and ~470Hz)
     const lfo = this.ctx.createOscillator()
     lfo.type = 'sine'
     lfo.frequency.setValueAtTime(0.06, this.ctx.currentTime) // ~16 sec cycle
 
     const lfoGain = this.ctx.createGain()
-    lfoGain.gain.setValueAtTime(60, this.ctx.currentTime) // sweep filter +- 60Hz
+    lfoGain.gain.setValueAtTime(120, this.ctx.currentTime) // sweep filter +- 120Hz
 
     lfo.connect(lfoGain)
     lfoGain.connect(filter.frequency)
 
     // Connect oscillators to filter
     const oscGain = this.ctx.createGain()
-    oscGain.gain.setValueAtTime(0.35, this.ctx.currentTime)
+    oscGain.gain.setValueAtTime(0.3, this.ctx.currentTime)
 
     osc1.connect(oscGain)
     osc2.connect(oscGain)
     osc3.connect(oscGain)
+    osc4.connect(oscGain)
+    osc5.connect(oscGain)
 
     oscGain.connect(filter)
     filter.connect(this.masterGain)
@@ -79,8 +91,8 @@ class AmbientSynthesizer {
     // Filter white noise
     const noiseFilter = this.ctx.createBiquadFilter()
     noiseFilter.type = 'bandpass'
-    noiseFilter.frequency.setValueAtTime(320, this.ctx.currentTime)
-    noiseFilter.Q.setValueAtTime(1.2, this.ctx.currentTime)
+    noiseFilter.frequency.setValueAtTime(350, this.ctx.currentTime)
+    noiseFilter.Q.setValueAtTime(1.0, this.ctx.currentTime)
 
     // Noise slow LFO swell (simulating natural ocean breathing/wind)
     this.noiseLFO = this.ctx.createOscillator()
@@ -88,13 +100,13 @@ class AmbientSynthesizer {
     this.noiseLFO.frequency.setValueAtTime(0.04, this.ctx.currentTime) // ~25s cycle
 
     const noiseLFOGain = this.ctx.createGain()
-    noiseLFOGain.gain.setValueAtTime(120, this.ctx.currentTime)
+    noiseLFOGain.gain.setValueAtTime(150, this.ctx.currentTime)
 
     this.noiseLFO.connect(noiseLFOGain)
     noiseLFOGain.connect(noiseFilter.frequency)
 
     const noiseGain = this.ctx.createGain()
-    noiseGain.gain.setValueAtTime(0.007, this.ctx.currentTime) // Very subtle atmospheric hum
+    noiseGain.gain.setValueAtTime(0.015, this.ctx.currentTime) // Very subtle atmospheric hum
 
     this.noiseSource.connect(noiseFilter)
     noiseFilter.connect(noiseGain)
@@ -104,6 +116,8 @@ class AmbientSynthesizer {
     osc1.start()
     osc2.start()
     osc3.start()
+    osc4.start()
+    osc5.start()
     lfo.start()
     this.noiseSource.start()
     this.noiseLFO.start()
@@ -120,8 +134,8 @@ class AmbientSynthesizer {
     }
 
     this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime)
-    // Smooth 2-second fade-in
-    this.masterGain.gain.linearRampToValueAtTime(0.08, this.ctx.currentTime + 2.0)
+    // Smooth 2-second fade-in to an audible level (0.16)
+    this.masterGain.gain.linearRampToValueAtTime(0.16, this.ctx.currentTime + 2.0)
   }
 
   stop() {
@@ -138,6 +152,7 @@ class AmbientSynthesizer {
     }, 1600)
   }
 }
+
 
 export default function AudioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false)
