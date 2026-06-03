@@ -6,6 +6,7 @@ import SplitText from '../ui/SplitText'
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const headlineRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
@@ -68,17 +69,19 @@ export default function Hero() {
       }
 
       // Fade out content on scroll
-      gsap.to([headlineRef.current, subtitleRef.current, ctaRef.current], {
-        opacity: 0,
-        y: -40,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: '60% top',
-          end: 'bottom top',
-          scrub: true,
-        },
-      })
+      if (contentRef.current) {
+        gsap.to(contentRef.current, {
+          opacity: 0,
+          y: -40,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: '60% top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        })
+      }
     }, sectionRef)
 
     return () => ctx.revert()
@@ -109,25 +112,37 @@ export default function Hero() {
           position: 'absolute',
           inset: '-20% 0',
           zIndex: 0,
+          backgroundColor: 'var(--color-bg)',
         }}
       >
+        {/* Background Image with opacity */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: 'url(/images/hero_bg.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.35,
+          }}
+        />
+        {/* Ambient radial glows */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
             background: `
-              radial-gradient(ellipse at 30% 20%, rgba(212, 168, 92, 0.06) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 80%, rgba(155, 141, 196, 0.04) 0%, transparent 50%),
-              var(--color-bg)
+              radial-gradient(ellipse at 30% 20%, rgba(212, 168, 92, 0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(155, 141, 196, 0.06) 0%, transparent 50%)
             `,
           }}
         />
-        {/* Video overlay gradient */}
+        {/* Dark overlay to fade into obsidian color at the bottom */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to top, var(--color-bg) 0%, transparent 55%)',
+            background: 'linear-gradient(to top, var(--color-bg) 0%, rgba(9, 9, 14, 0.7) 50%, rgba(9, 9, 14, 0.85) 100%)',
             zIndex: 1,
           }}
         />
@@ -135,6 +150,7 @@ export default function Hero() {
 
       {/* Content */}
       <div
+        ref={contentRef}
         style={{
           position: 'relative',
           zIndex: 2,
