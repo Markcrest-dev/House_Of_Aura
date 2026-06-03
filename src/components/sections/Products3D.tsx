@@ -10,7 +10,7 @@ function GoldParticles({ count = 2000 }) {
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3)
     for (let i = 0; i < count * 3; i++) {
-      pos[i] = (Math.random() - 0.5) * 18
+      pos[i] = (Math.random() - 0.5) * 15
     }
     return pos
   }, [count])
@@ -36,15 +36,15 @@ function GoldParticles({ count = 2000 }) {
         color={0xD4A85C}
         size={0.015}
         transparent
-        opacity={0.5}
+        opacity={0.4}
         sizeAttenuation
       />
     </points>
   )
 }
 
-/* ── Product 1: Amber Hair Oil Bottle ── */
-function ProductModel({ position = [0, 0, 0] as [number, number, number] }) {
+/* ── Tool 1: Branded Barber Clipper ── */
+function ClipperModel({ position = [0, 0, 0] as [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null!)
 
   useFrame((_, delta) => {
@@ -54,63 +54,323 @@ function ProductModel({ position = [0, 0, 0] as [number, number, number] }) {
   })
 
   return (
-    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.5}>
-      <group ref={groupRef} position={position}>
-        {/* Amber Glass Body */}
+    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
+      <group ref={groupRef} position={position} scale={1.45}>
+        {/* Main Casing Body */}
         <mesh position={[0, 0, 0]}>
-          <cylinderGeometry args={[0.35, 0.4, 1.8, 32]} />
-          <meshPhysicalMaterial
-            color="#cca05a"
-            roughness={0.05}
-            metalness={0.05}
-            transmission={0.8}
-            thickness={0.8}
-            ior={1.52}
-          />
+          <cylinderGeometry args={[0.22, 0.16, 1.8, 16]} />
+          <meshStandardMaterial color="#121216" roughness={0.7} metalness={0.2} />
         </mesh>
-        {/* Golden Hair Oil Liquid Core inside the bottle */}
-        <mesh position={[0, -0.1, 0]}>
-          <cylinderGeometry args={[0.31, 0.35, 1.5, 32]} />
-          <meshStandardMaterial
-            color="#b37f2d"
-            roughness={0.1}
-            metalness={0.2}
-          />
-        </mesh>
-        {/* Polished Gold Cap */}
-        <mesh position={[0, 1.05, 0]}>
-          <cylinderGeometry args={[0.2, 0.22, 0.4, 32]} />
-          <meshStandardMaterial
-            color="#D4A85C"
-            metalness={0.9}
-            roughness={0.15}
-          />
-        </mesh>
-        {/* Textured White Paper Label */}
-        <mesh position={[0, 0.05, 0]}>
-          <cylinderGeometry args={[0.36, 0.41, 0.6, 32]} />
-          <meshStandardMaterial
-            color="#ffffff"
-            roughness={0.55}
-            metalness={0.0}
-          />
-        </mesh>
-        {/* Label Gold Accent Rings */}
-        <mesh position={[0, 0.35, 0]}>
-          <torusGeometry args={[0.375, 0.015, 8, 32]} />
-          <meshStandardMaterial color="#D4A85C" metalness={0.85} roughness={0.15} />
-        </mesh>
+        
+        {/* Ergonomic grip indentation */}
         <mesh position={[0, -0.25, 0]}>
-          <torusGeometry args={[0.415, 0.015, 8, 32]} />
-          <meshStandardMaterial color="#D4A85C" metalness={0.85} roughness={0.15} />
+          <cylinderGeometry args={[0.20, 0.20, 0.4, 16]} />
+          <meshStandardMaterial color="#0a0a0d" roughness={0.8} />
+        </mesh>
+
+        {/* Polished gold faceplate / Accent strip */}
+        <mesh position={[0, 0.1, 0.08]} scale={[1.05, 1, 1.05]}>
+          <cylinderGeometry args={[0.18, 0.14, 1.2, 16, 1, false, -Math.PI/2, Math.PI]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+
+        {/* Accent Ring near bottom */}
+        <mesh position={[0, -0.6, 0]}>
+          <torusGeometry args={[0.17, 0.018, 8, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+
+        {/* Taper Adjusting Lever */}
+        <group position={[0.18, 0.5, 0]} rotation={[0, 0, -Math.PI / 6]}>
+          <mesh>
+            <boxGeometry args={[0.05, 0.22, 0.05]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+          </mesh>
+          <mesh position={[0, 0.1, 0]}>
+            <sphereGeometry args={[0.035, 8, 8]} />
+            <meshStandardMaterial color="#121216" roughness={0.7} />
+          </mesh>
+        </group>
+
+        {/* Blade Base (Metallic gold block) */}
+        <mesh position={[0, 0.95, 0]} rotation={[Math.PI / 12, 0, 0]}>
+          <boxGeometry args={[0.5, 0.1, 0.16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+
+        {/* Clipper teeth */}
+        <group position={[0, 1.01, 0.04]} rotation={[Math.PI / 12, 0, 0]}>
+          {Array.from({ length: 15 }).map((_, idx) => {
+            const x = -0.21 + idx * 0.03;
+            return (
+              <mesh key={idx} position={[x, 0, 0]}>
+                <boxGeometry args={[0.012, 0.08, 0.05]} />
+                <meshStandardMaterial color="#e2e2e2" metalness={0.95} roughness={0.05} />
+              </mesh>
+            )
+          })}
+        </group>
+
+        {/* Power Switch */}
+        <mesh position={[0, -0.1, 0.2]} rotation={[0.2, 0, 0]}>
+          <boxGeometry args={[0.05, 0.1, 0.03]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+        </mesh>
+
+        {/* Hanging loop at the bottom */}
+        <mesh position={[0, -0.96, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.07, 0.016, 8, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
         </mesh>
       </group>
     </Float>
   )
 }
 
-/* ── Product 2: Frosted Pomade Jar ── */
-function ProductModel2({ position = [0, 0, 0] as [number, number, number] }) {
+/* ── Tool 2: Branded Professional Dryer ── */
+function DryerModel({ position = [0, 0, 0] as [number, number, number] }) {
+  const groupRef = useRef<THREE.Group>(null!)
+
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y -= delta * 0.2
+    }
+  })
+
+  return (
+    <Float speed={1.3} rotationIntensity={0.2} floatIntensity={0.35}>
+      <group ref={groupRef} position={position} scale={1.35}>
+        {/* Main horizontal barrel */}
+        <mesh position={[0, 0.25, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.22, 0.32, 1.0, 16]} />
+          <meshStandardMaterial color="#121216" roughness={0.65} metalness={0.2} />
+        </mesh>
+
+        {/* Front Concentrator Nozzle */}
+        <mesh position={[-0.6, 0.25, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.16, 0.22, 0.25, 16]} />
+          <meshStandardMaterial color="#0a0a0d" roughness={0.8} />
+        </mesh>
+        {/* Gold Tip of Nozzle */}
+        <mesh position={[-0.73, 0.25, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.05, 0.16, 0.02, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+
+        {/* Rear Air Intake */}
+        <group position={[0.51, 0.25, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <mesh>
+            <cylinderGeometry args={[0.31, 0.31, 0.05, 16]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+          <mesh position={[0, 0.03, 0]}>
+            <sphereGeometry args={[0.28, 12, 12]} />
+            <meshStandardMaterial color="#1a1a1f" metalness={0.8} roughness={0.4} />
+          </mesh>
+        </group>
+
+        {/* Angled Handle */}
+        <mesh position={[0.12, -0.35, 0]} rotation={[0, 0, -Math.PI / 10]}>
+          <cylinderGeometry args={[0.14, 0.12, 0.9, 16]} />
+          <meshStandardMaterial color="#121216" roughness={0.65} metalness={0.2} />
+        </mesh>
+
+        {/* Handle cap in gold */}
+        <mesh position={[0.25, -0.8, 0]} rotation={[0, 0, -Math.PI / 10]}>
+          <cylinderGeometry args={[0.12, 0.13, 0.06, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+
+        {/* Cord hook */}
+        <mesh position={[0.28, -0.89, 0]} rotation={[Math.PI / 2, 0.3, 0]}>
+          <torusGeometry args={[0.06, 0.015, 8, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+
+        {/* Gold buttons on handle */}
+        <group position={[0.04, -0.18, 0]} rotation={[0, 0, -Math.PI / 10]}>
+          <mesh position={[0, 0.12, 0.13]} rotation={[0, Math.PI / 2, 0]}>
+            <capsuleGeometry args={[0.025, 0.06, 4, 8]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+          </mesh>
+          <mesh position={[0, -0.04, 0.13]} rotation={[0, Math.PI / 2, 0]}>
+            <capsuleGeometry args={[0.025, 0.06, 4, 8]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+          </mesh>
+        </group>
+
+        {/* Decorative gold ring connecting barrel and handle */}
+        <mesh position={[0.08, -0.04, 0]}>
+          <torusGeometry args={[0.15, 0.025, 8, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+      </group>
+    </Float>
+  )
+}
+
+/* ── Tool 3: Branded Damascene Shears ── */
+function ScissorsModel({ position = [0, 0, 0] as [number, number, number] }) {
+  const groupRef = useRef<THREE.Group>(null!)
+
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.25
+    }
+  })
+
+  return (
+    <Float speed={1.5} rotationIntensity={0.25} floatIntensity={0.4}>
+      <group ref={groupRef} position={position} scale={1.4} rotation={[Math.PI / 6, 0, Math.PI / 4]}>
+        {/* Left Shear Blade */}
+        <group rotation={[0, 0, Math.PI / 32]}>
+          {/* Blade shaft */}
+          <mesh position={[0, 0.55, 0]}>
+            <boxGeometry args={[0.04, 1.1, 0.015]} />
+            <meshStandardMaterial color="#dedede" metalness={0.95} roughness={0.1} />
+          </mesh>
+          {/* Sharp Edge bevel */}
+          <mesh position={[-0.025, 0.55, 0.004]}>
+            <boxGeometry args={[0.012, 1.1, 0.008]} />
+            <meshStandardMaterial color="#ffffff" metalness={0.99} roughness={0.05} />
+          </mesh>
+          {/* Golden Handle stem */}
+          <mesh position={[0, -0.25, 0]}>
+            <cylinderGeometry args={[0.025, 0.025, 0.5, 8]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+          {/* Finger ring */}
+          <mesh position={[-0.13, -0.55, 0]} rotation={[0, 0, Math.PI / 6]}>
+            <torusGeometry args={[0.12, 0.025, 8, 24]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+        </group>
+
+        {/* Right Shear Blade */}
+        <group rotation={[0, 0, -Math.PI / 32]}>
+          {/* Blade shaft */}
+          <mesh position={[0, 0.55, 0]}>
+            <boxGeometry args={[0.04, 1.1, 0.015]} />
+            <meshStandardMaterial color="#dedede" metalness={0.95} roughness={0.1} />
+          </mesh>
+          {/* Sharp Edge bevel */}
+          <mesh position={[0.025, 0.55, -0.004]}>
+            <boxGeometry args={[0.012, 1.1, 0.008]} />
+            <meshStandardMaterial color="#ffffff" metalness={0.99} roughness={0.05} />
+          </mesh>
+          {/* Golden Handle stem */}
+          <mesh position={[0, -0.25, 0]}>
+            <cylinderGeometry args={[0.025, 0.025, 0.5, 8]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+          {/* Finger ring */}
+          <mesh position={[0.13, -0.55, 0]} rotation={[0, 0, -Math.PI / 6]}>
+            <torusGeometry args={[0.12, 0.025, 8, 24]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+          {/* Finger Rest (Tang) */}
+          <mesh position={[0.22, -0.68, 0]} rotation={[0, 0, -Math.PI / 3.5]}>
+            <capsuleGeometry args={[0.018, 0.1, 4, 8]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+        </group>
+
+        {/* Pivot Pin screw */}
+        <mesh position={[0, 0, 0.015]}>
+          <cylinderGeometry args={[0.04, 0.04, 0.03, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.95} roughness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, -0.015]}>
+          <cylinderGeometry args={[0.04, 0.04, 0.03, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.95} roughness={0.1} />
+        </mesh>
+      </group>
+    </Float>
+  )
+}
+
+/* ── Tool 4: Branded Gold Paddle Brush ── */
+function BrushModel({ position = [0, 0, 0] as [number, number, number] }) {
+  const groupRef = useRef<THREE.Group>(null!)
+
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.3
+    }
+  })
+
+  // Pre-generate brush bristle coordinates
+  const bristlePositions = useMemo(() => {
+    const arr = []
+    const rows = 8
+    const cols = 5
+    for (let r = 0; r < rows; r++) {
+      const y = -0.45 + (r / (rows - 1)) * 0.9
+      const factor = Math.sin((r / (rows - 1)) * Math.PI)
+      const rowCols = Math.max(1, Math.round(cols * factor))
+      for (let c = 0; c < rowCols; c++) {
+        const x = rowCols > 1 ? -0.22 + (c / (rowCols - 1)) * 0.44 : 0
+        arr.push({ x, y })
+      }
+    }
+    return arr
+  }, [])
+
+  return (
+    <Float speed={1.4} rotationIntensity={0.2} floatIntensity={0.35}>
+      <group ref={groupRef} position={position} scale={1.35}>
+        {/* Handle */}
+        <mesh position={[0, -0.85, 0]}>
+          <cylinderGeometry args={[0.07, 0.06, 0.9, 16]} />
+          <meshStandardMaterial color="#121216" roughness={0.65} metalness={0.2} />
+        </mesh>
+        {/* Handle Cap in gold */}
+        <mesh position={[0, -1.3, 0]}>
+          <cylinderGeometry args={[0.06, 0.07, 0.06, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+        {/* Gold ring connector */}
+        <mesh position={[0, -0.38, 0]}>
+          <torusGeometry args={[0.08, 0.016, 8, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+
+        {/* Back Plate (Oval Gold Plate) */}
+        <mesh position={[0, 0.15, -0.04]}>
+          <cylinderGeometry args={[0.36, 0.36, 0.1, 24]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+        </mesh>
+        
+        {/* Rubber Cushion */}
+        <mesh position={[0, 0.15, 0.02]}>
+          <cylinderGeometry args={[0.34, 0.34, 0.04, 24]} />
+          <meshStandardMaterial color="#1d1d22" roughness={0.85} />
+        </mesh>
+
+        {/* Bristle Pins */}
+        <group position={[0, 0.15, 0.04]}>
+          {bristlePositions.map((pos, idx) => (
+            <group key={idx} position={[pos.x, pos.y, 0]}>
+              {/* Pin shaft */}
+              <mesh position={[0, 0, 0.06]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.007, 0.007, 0.12, 4]} />
+                <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+              </mesh>
+              {/* Ball tip */}
+              <mesh position={[0, 0, 0.12]}>
+                <sphereGeometry args={[0.016, 6, 6]} />
+                <meshStandardMaterial color="#121216" roughness={0.5} />
+              </mesh>
+            </group>
+          ))}
+        </group>
+      </group>
+    </Float>
+  )
+}
+
+/* ── Tool 5: Branded Carbon Comb ── */
+function CombModel({ position = [0, 0, 0] as [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null!)
 
   useFrame((_, delta) => {
@@ -119,42 +379,43 @@ function ProductModel2({ position = [0, 0, 0] as [number, number, number] }) {
     }
   })
 
+  const teeth = useMemo(() => {
+    const arr = []
+    const count = 30
+    for (let i = 0; i < count; i++) {
+      const x = -0.8 + (i / (count - 1)) * 1.6
+      const length = 0.44 - Math.abs(x) * 0.05
+      arr.push({ x, length })
+    }
+    return arr
+  }, [])
+
   return (
-    <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.6}>
-      <group ref={groupRef} position={position}>
-        {/* Frosted Deep Violet Jar Body */}
-        <mesh position={[0, 0, 0]}>
-          <cylinderGeometry args={[0.5, 0.5, 0.8, 32]} />
-          <meshPhysicalMaterial
-            color="#1F153F"
-            roughness={0.2}
-            metalness={0.05}
-            transmission={0.6}
-            thickness={0.7}
-            ior={1.48}
-          />
+    <Float speed={1.5} rotationIntensity={0.25} floatIntensity={0.35}>
+      <group ref={groupRef} position={position} scale={1.45} rotation={[0, 0, Math.PI / 10]}>
+        {/* Comb Spine (Main bar in matte black) */}
+        <mesh position={[0, 0.2, 0]}>
+          <boxGeometry args={[1.7, 0.1, 0.04]} />
+          <meshStandardMaterial color="#121216" roughness={0.65} metalness={0.2} />
         </mesh>
-        {/* Brushed Gold Lid */}
-        <mesh position={[0, 0.48, 0]}>
-          <cylinderGeometry args={[0.52, 0.52, 0.16, 32]} />
-          <meshStandardMaterial
-            color="#D4A85C"
-            metalness={0.9}
-            roughness={0.22}
-          />
+
+        {/* Gold Accent Strip on the spine */}
+        <mesh position={[0, 0.23, 0.022]}>
+          <boxGeometry args={[1.5, 0.025, 0.008]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
         </mesh>
-        {/* Minimalist White Label */}
-        <mesh position={[0, 0, 0]}>
-          <cylinderGeometry args={[0.505, 0.505, 0.42, 32]} />
-          <meshStandardMaterial
-            color="#ffffff"
-            roughness={0.6}
-            metalness={0.0}
-          />
-        </mesh>
-        {/* Golden Stripe running through the label */}
-        <mesh position={[0, 0.15, 0]}>
-          <torusGeometry args={[0.515, 0.012, 8, 32]} />
+
+        {/* Gold Plated Teeth */}
+        {teeth.map((t, idx) => (
+          <mesh key={idx} position={[t.x, 0.2 - t.length / 2 - 0.05, 0]}>
+            <boxGeometry args={[0.015, t.length, 0.025]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+        ))}
+
+        {/* Comb grip details */}
+        <mesh position={[-0.75, 0.2, 0.022]}>
+          <cylinderGeometry args={[0.05, 0.05, 0.06, 16]} rotation={[Math.PI / 2, 0, 0]} />
           <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
         </mesh>
       </group>
@@ -162,56 +423,153 @@ function ProductModel2({ position = [0, 0, 0] as [number, number, number] }) {
   )
 }
 
-/* ── Product 3: Rose Gold Styling Tube ── */
-function ProductModel3({ position = [0, 0, 0] as [number, number, number] }) {
+/* ── Tool 6: Branded Straight Razor ── */
+function RazorModel({ position = [0, 0, 0] as [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null!)
 
   useFrame((_, delta) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.35
+      groupRef.current.rotation.y += delta * 0.2
     }
   })
 
   return (
-    <Float speed={1.8} rotationIntensity={0.4} floatIntensity={0.4}>
-      <group ref={groupRef} position={position}>
-        {/* Metallic Rose Gold Tube Body */}
-        <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI * 0.05]}>
-          <capsuleGeometry args={[0.2, 1.2, 8, 16]} />
-          <meshStandardMaterial
-            color="#d6a5b8"
-            metalness={0.8}
-            roughness={0.2}
-          />
+    <Float speed={1.6} rotationIntensity={0.3} floatIntensity={0.4}>
+      <group ref={groupRef} position={position} scale={1.4} rotation={[Math.PI / 6, Math.PI / 6, 0]}>
+        {/* Handle Scale in matte black */}
+        <group position={[-0.35, -0.35, 0]} rotation={[0, 0, -Math.PI / 6]}>
+          <mesh>
+            <boxGeometry args={[1.1, 0.1, 0.06]} />
+            <meshStandardMaterial color="#1a1a24" roughness={0.7} metalness={0.1} />
+          </mesh>
+          {/* Gold assembly pins */}
+          <mesh position={[-0.48, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.012, 0.012, 0.08, 8]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+          </mesh>
+          <mesh position={[0.48, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.012, 0.012, 0.08, 8]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
+          </mesh>
+        </group>
+
+        {/* Pivot Screw */}
+        <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.028, 0.028, 0.1, 16]} />
+          <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.1} />
         </mesh>
-        {/* Metallic Gold Cap */}
-        <mesh position={[0, 0.85, 0]}>
-          <cylinderGeometry args={[0.15, 0.15, 0.25, 16]} />
-          <meshStandardMaterial
-            color="#D4A85C"
-            metalness={0.9}
-            roughness={0.1}
-          />
-        </mesh>
-        {/* Gold Crimp tail at the bottom */}
-        <mesh position={[0, -0.75, 0]} rotation={[0, 0, Math.PI * 0.05]}>
-          <boxGeometry args={[0.42, 0.08, 0.06]} />
-          <meshStandardMaterial
-            color="#D4A85C"
-            metalness={0.9}
-            roughness={0.15}
-          />
-        </mesh>
+
+        {/* Blade & Shank Assembly */}
+        <group position={[0.35, 0.25, 0]} rotation={[0, 0, Math.PI / 4.5]}>
+          {/* Gold Shank */}
+          <mesh position={[-0.35, 0, 0]}>
+            <boxGeometry args={[0.5, 0.05, 0.03]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.95} roughness={0.1} />
+          </mesh>
+
+          {/* Steel blade body */}
+          <mesh position={[0.15, 0.06, 0]}>
+            <boxGeometry args={[0.7, 0.18, 0.012]} />
+            <meshStandardMaterial color="#e5e5e5" metalness={0.95} roughness={0.05} />
+          </mesh>
+          {/* Bevel razor edge */}
+          <mesh position={[0.15, -0.035, 0.004]}>
+            <boxGeometry args={[0.7, 0.015, 0.004]} />
+            <meshStandardMaterial color="#ffffff" metalness={0.99} roughness={0.02} />
+          </mesh>
+          {/* Blade gold spine backing */}
+          <mesh position={[0.15, 0.16, 0]}>
+            <boxGeometry args={[0.72, 0.025, 0.025]} />
+            <meshStandardMaterial color="#D4A85C" metalness={0.9} roughness={0.15} />
+          </mesh>
+        </group>
       </group>
     </Float>
   )
 }
+
+/* ── Hardware Specifications Dataset ── */
+const TOOLS_DATA = [
+  {
+    id: 'clipper',
+    name: 'AURA Pro-Alloy Clipper',
+    subtitle: 'Signature Sculpting & Fading',
+    description: 'Designed for master craftsmen, the AURA Pro-Alloy Clipper blends a high-torque rotary motor with our signature gold-plated carbon steel blade. It delivers ultra-close tapering, flawless fades, and runs completely cordless with absolute control.',
+    specs: [
+      { label: 'Blade Material', value: 'Titanium-coated Carbon Steel' },
+      { label: 'Motor Power', value: '7,200 RPM High-Torque Rotary' },
+      { label: 'Runtime', value: '180 Minutes Cordless Lithium-Ion' },
+      { label: 'Housing Finish', value: 'Matte Obsidian & Electroplated Gold' },
+    ]
+  },
+  {
+    id: 'dryer',
+    name: 'Gold-Ion Professional Dryer',
+    subtitle: 'High-Velocity Sculpting',
+    description: 'Engineered with a brushless digital motor and dual-ion technology, the Gold-Ion Dryer delivers ultra-fast drying while locking in natural moisture. The precision concentrator nozzle concentrates gold-ion airflow to banish frizz and create sleek, high-gloss finishes.',
+    specs: [
+      { label: 'Motor Type', value: '110,000 RPM Brushless Digital' },
+      { label: 'Power Output', value: '1800W Eco-Velocity' },
+      { label: 'Heat Settings', value: '4 Levels (including Cold Shot)' },
+      { label: 'Airflow Speed', value: '3 Speed Levels with Gold Ionization' },
+    ]
+  },
+  {
+    id: 'scissors',
+    name: 'AURA Damascene Shears',
+    subtitle: 'Precision Hair Sculpting',
+    description: 'Hand-honed from premium Japanese steel, our professional shears offer surgical precision. Featuring perfectly balanced crossed blades, an adjustable tension pivot screw, and an ergonomic ring system with integrated finger rest for all-day comfort.',
+    specs: [
+      { label: 'Steel Grade', value: 'Japanese 440C Cobalt Stainless Steel' },
+      { label: 'Blade Type', value: 'Convex Edge, Hollow Ground' },
+      { label: 'Tension System', value: 'Signature Gold Click-Ball Pivot' },
+      { label: 'Ergonomic Rest', value: 'Integrated Tang with Silhouette Ring' },
+    ]
+  },
+  {
+    id: 'brush',
+    name: 'AURA 24K Gold Paddle Brush',
+    subtitle: 'Detangling & Scalp Revitalization',
+    description: 'Crafted with a polished gold backplate and a luxurious soft-touch cushion handle, this paddle brush detangles hair smoothly without pulling. Its flexible pin bristles are capped with rounded tips to massage and stimulate the scalp while redistributing natural oils.',
+    specs: [
+      { label: 'Base Plate', value: '24K Electroplated Gold Finish' },
+      { label: 'Cushion', value: 'Anti-Static Natural Rubber Cushion' },
+      { label: 'Bristles', value: 'Polished Pins with Anti-Scraping Spheres' },
+      { label: 'Ideal For', value: 'Smoothing, Volume, and Scalp Care' },
+    ]
+  },
+  {
+    id: 'comb',
+    name: 'AURA Carbon Barber Comb',
+    subtitle: 'Static-Free Detailing & Sectioning',
+    description: 'A dual-action styling comb featuring wide teeth for styling and fine teeth for detailing. Its anti-static carbon spine is accented by electroplated gold teeth, making it both a beautiful styling accessory and a resilient tool for precise sectioning.',
+    specs: [
+      { label: 'Material', value: 'Carbon Fiber & Electroplated Alloy' },
+      { label: 'Tooth Type', value: 'Smooth Rounded-Tip Dual Spacing' },
+      { label: 'Resistance', value: 'Heat resistant up to 230°C / Anti-Static' },
+      { label: 'Spine Accent', value: 'Branded Gold Aura Badge' },
+    ]
+  },
+  {
+    id: 'razor',
+    name: 'AURA Luxury Straight Razor',
+    subtitle: 'Signature Shaving & Outlining',
+    description: 'The ultimate tool for clean outlines and wet shaving. Featuring a folding matte obsidian handle with gold pins, a surgical steel shank, and a quick-load blade holder, this straight razor combines vintage barbering heritage with contemporary luxury styling.',
+    specs: [
+      { label: 'Shank Material', value: 'Gold-Plated Stainless Steel' },
+      { label: 'Handle (Scale)', value: 'Ergonomic Composite in Obsidian Matte' },
+      { label: 'Blade Type', value: 'Quick-Load Double-Edge Half Blades' },
+      { label: 'Pivot Tension', value: 'Adjustable Brass Dual-Pin Screw' },
+    ]
+  }
+]
 
 /* ── Main Section ── */
 export default function Products3D() {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
   const [isInView, setIsInView] = useState(false)
+  const [activeTool, setActiveTool] = useState('clipper')
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -240,6 +598,29 @@ export default function Products3D() {
     return () => ctx.revert()
   }, [])
 
+  const activeToolData = useMemo(() => {
+    return TOOLS_DATA.find((t) => t.id === activeTool) || TOOLS_DATA[0]
+  }, [activeTool])
+
+  const renderActiveModel = () => {
+    switch (activeTool) {
+      case 'clipper':
+        return <ClipperModel position={[0, 0, 0]} />
+      case 'dryer':
+        return <DryerModel position={[0, -0.1, 0]} />
+      case 'scissors':
+        return <ScissorsModel position={[0, 0, 0]} />
+      case 'brush':
+        return <BrushModel position={[0, 0.25, 0]} />
+      case 'comb':
+        return <CombModel position={[0, -0.1, 0]} />
+      case 'razor':
+        return <RazorModel position={[0, -0.05, 0]} />
+      default:
+        return <ClipperModel position={[0, 0, 0]} />
+    }
+  }
+
   return (
     <section id="products" ref={sectionRef} style={{
       padding: 'var(--space-16) 0', backgroundColor: 'var(--color-bg)', position: 'relative',
@@ -250,48 +631,212 @@ export default function Products3D() {
             fontFamily: 'var(--font-body)', fontSize: '12px', letterSpacing: '0.2em',
             textTransform: 'uppercase', color: 'var(--color-gold)', display: 'block',
             marginBottom: 'var(--space-2)',
-          }}>Products</span>
+          }}>Collection</span>
           <h2 style={{
             fontFamily: 'var(--font-display)', fontSize: 'clamp(36px, 5vw, 64px)',
             fontWeight: 700, color: 'var(--color-heading)', marginBottom: 'var(--space-3)',
-          }}>Objects of Desire</h2>
+          }}>Hardware of Aura</h2>
           <p style={{
             fontFamily: 'var(--font-sub)', fontSize: 'clamp(16px, 2vw, 22px)',
             color: 'var(--color-text-muted)', fontWeight: 300, fontStyle: 'italic',
             maxWidth: '550px', margin: '0 auto',
-          }}>Premium products chosen for your hair. Drag to explore.</p>
+          }}>Branded professional tools engineered for the House. Select a tool to explore.</p>
         </div>
 
-        {/* 3D Canvas */}
-        <div style={{ width: '100%', height: '500px', position: 'relative' }}>
-          {isInView && (
-            <Canvas camera={{ position: [0, 1.5, 7], fov: 45 }} style={{ background: 'transparent' }}>
-              <ambientLight intensity={0.4} />
-              <spotLight position={[5, 8, 5]} intensity={2.0} color="#D4A85C" angle={0.4} penumbra={0.5} />
-              <spotLight position={[-5, 6, -3]} intensity={1.0} color="#9B8DC4" angle={0.3} penumbra={0.8} />
-              <pointLight position={[0, -2, 4]} intensity={0.5} color="#D4A85C" />
+        {/* Split Screen Showcase Grid */}
+        <div 
+          style={{
+            display: 'grid',
+            gap: 'var(--space-6)',
+            alignItems: 'stretch',
+          }} 
+          className="grid-cols-1 md:grid-cols-[1.2fr_1.8fr]"
+        >
+          {/* Left Column: Selector Panel & Specs */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-4)',
+            backgroundColor: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+            borderRadius: '12px',
+            padding: 'var(--space-4) var(--space-6)',
+            justifyContent: 'center',
+          }}>
+            {/* Horizontal scroll selector on mobile, vertical stack on desktop */}
+            <div 
+              style={{
+                display: 'flex',
+                gap: 'var(--space-2)',
+                scrollbarWidth: 'none',
+              }} 
+              className="flex-row overflow-x-auto pb-2 border-b border-[var(--color-border)] md:flex-col md:overflow-visible md:border-b-0 md:pb-0"
+            >
+              {TOOLS_DATA.map((tool) => {
+                const isActive = activeTool === tool.id
+                return (
+                  <button
+                    key={tool.id}
+                    onClick={() => setActiveTool(tool.id)}
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '13px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.15em',
+                      textAlign: 'left',
+                      padding: 'var(--space-2) var(--space-3)',
+                      color: isActive ? 'var(--color-gold)' : 'var(--color-text-muted)',
+                      backgroundColor: isActive ? 'rgba(212, 168, 92, 0.06)' : 'transparent',
+                      border: 'none',
+                      borderLeft: isActive ? '3px solid var(--color-gold)' : '3px solid transparent',
+                      borderRadius: '0 4px 4px 0',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      whiteSpace: 'nowrap',
+                    }}
+                    className="hover:text-[var(--color-gold)] hover:bg-[rgba(212,168,92,0.03)]"
+                  >
+                    {tool.name.replace('AURA ', '')}
+                  </button>
+                )
+              })}
+            </div>
 
-              {/* Realistic environmental reflection mapping */}
-              <Environment preset="studio" />
+            {/* Spec Card Details */}
+            <div style={{
+              paddingTop: 'var(--space-2)',
+            }}>
+              <span style={{
+                fontFamily: 'var(--font-accent)',
+                fontSize: '13px',
+                fontStyle: 'italic',
+                color: 'var(--color-gold)',
+                display: 'block',
+              }}>{activeToolData.subtitle}</span>
+              <h3 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '26px',
+                fontWeight: 600,
+                color: 'var(--color-heading)',
+                marginTop: 'var(--space-1)',
+                marginBottom: 'var(--space-3)',
+              }}>{activeToolData.name}</h3>
+              <p style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '15px',
+                lineHeight: '1.65',
+                color: 'var(--color-text-muted)',
+                marginBottom: 'var(--space-4)',
+              }}>{activeToolData.description}</p>
+              
+              <div style={{
+                borderTop: '1px solid var(--color-border)',
+                paddingTop: 'var(--space-3)',
+              }}>
+                <h4 style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '11px',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-gold)',
+                  marginBottom: 'var(--space-2)',
+                  fontWeight: '600',
+                }}>Hardware Specifications</h4>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--space-2)',
+                }}>
+                  {activeToolData.specs.map((spec, i) => (
+                    <div key={i} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '13px',
+                      fontFamily: 'var(--font-body)',
+                      borderBottom: '1px dashed var(--color-border)',
+                      paddingBottom: '4px',
+                    }}>
+                      <span style={{ color: 'var(--color-text-muted)' }}>{spec.label}</span>
+                      <span style={{ color: 'var(--color-text)', fontWeight: 500 }}>{spec.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
 
-              <GoldParticles count={1500} />
+          {/* Right Column: 3D Canvas */}
+          <div 
+            style={{
+              position: 'relative',
+              width: '100%',
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '12px',
+              overflow: 'hidden',
+            }}
+            className="h-[380px] md:h-[580px]"
+          >
+            {/* Visual background accents */}
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '280px',
+              height: '280px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(212,168,92,0.12) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }} />
+            
+            {/* Control prompt overlay */}
+            <div style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '0',
+              right: '0',
+              textAlign: 'center',
+              pointerEvents: 'none',
+              zIndex: 10,
+            }}>
+              <span style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '10px',
+                letterSpacing: '0.25em',
+                textTransform: 'uppercase',
+                color: 'var(--color-gold)',
+                opacity: 0.7,
+              }}>Drag to rotate 360°</span>
+            </div>
 
-              <ProductModel position={[-2.5, 0, 0]} />
-              <ProductModel2 position={[0, -0.3, 0.5]} />
-              <ProductModel3 position={[2.5, 0, 0]} />
+            {isInView && (
+              <Canvas camera={{ position: [0, 0, 5.2], fov: 45 }} style={{ background: 'transparent' }}>
+                <ambientLight intensity={0.5} />
+                <spotLight position={[6, 8, 4]} intensity={2.5} color="#D4A85C" angle={0.45} penumbra={0.6} />
+                <spotLight position={[-6, 6, -3]} intensity={1.5} color="#9B8DC4" angle={0.3} penumbra={0.8} />
+                <pointLight position={[0, -3, 3]} intensity={0.8} color="#D4A85C" />
 
-              <OrbitControls
-                enableZoom={false}
-                enablePan={false}
-                autoRotate
-                autoRotateSpeed={0.5}
-                maxPolarAngle={Math.PI / 1.8}
-                minPolarAngle={Math.PI / 3}
-              />
-            </Canvas>
-          )}
+                <Environment preset="studio" />
+
+                <GoldParticles count={1000} />
+
+                {renderActiveModel()}
+
+                <OrbitControls
+                  enableZoom={false}
+                  enablePan={false}
+                  autoRotate
+                  autoRotateSpeed={0.4}
+                  maxPolarAngle={Math.PI / 1.6}
+                  minPolarAngle={Math.PI / 4}
+                />
+              </Canvas>
+            )}
+          </div>
         </div>
       </div>
     </section>
   )
 }
+
