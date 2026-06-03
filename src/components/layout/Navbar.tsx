@@ -3,12 +3,12 @@ import { Menu, X } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const navLinks = [
-  { label: 'Services', href: '#services' },
-  { label: 'Artists', href: '#artists' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Rituals', href: '#experience' },
-  { label: 'Testimonials', href: '#testimonials' },
-  { label: 'Book', href: '#booking' },
+  { label: 'Services', href: '/services' },
+  { label: 'Artists', href: '/artists' },
+  { label: 'Gallery', href: '/gallery' },
+  { label: 'Rituals', href: '/rituals' },
+  { label: 'Testimonials', href: '/testimonials' },
+  { label: 'Book', href: '/booking' },
 ]
 
 export default function Navbar() {
@@ -27,34 +27,13 @@ export default function Navbar() {
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault()
-    
-    if (href === '#booking') {
-      navigate('/booking')
-      setIsMobileOpen(false)
-      return
-    }
-    
-    if (location.pathname !== '/') {
-      navigate('/')
-      setTimeout(() => {
-        const target = document.querySelector(href)
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 100)
-    } else {
-      const target = document.querySelector(href)
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' })
-      }
-    }
+    navigate(href)
     setIsMobileOpen(false)
   }
 
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     navigate('/')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
@@ -110,32 +89,35 @@ export default function Navbar() {
             }}
             className="desktop-nav"
           >
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '12px',
-                  fontWeight: 400,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: 'var(--color-text-muted)',
-                  textDecoration: 'none',
-                  transition: `color var(--duration-fast) var(--ease-luxury)`,
-                  position: 'relative',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = 'var(--color-gold)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = 'var(--color-text-muted)'
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '12px',
+                    fontWeight: 400,
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    color: isActive ? 'var(--color-gold)' : 'var(--color-text-muted)',
+                    textDecoration: 'none',
+                    transition: `color var(--duration-fast) var(--ease-luxury)`,
+                    position: 'relative',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = 'var(--color-gold)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = isActive ? 'var(--color-gold)' : 'var(--color-text-muted)'
+                  }}
+                >
+                  {link.label}
+                </a>
+              )
+            })}
           </div>
 
           {/* Mobile Menu Button */}
@@ -175,32 +157,35 @@ export default function Navbar() {
           transition: `opacity var(--duration-base) var(--ease-luxury)`,
         }}
       >
-        {navLinks.map((link, i) => (
-          <a
-            key={link.label}
-            href={link.href}
-            onClick={(e) => handleNavClick(e, link.href)}
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '32px',
-              fontWeight: 400,
-              color: 'var(--color-heading)',
-              textDecoration: 'none',
-              transform: isMobileOpen ? 'translateY(0)' : 'translateY(20px)',
-              opacity: isMobileOpen ? 1 : 0,
-              transition: `all var(--duration-base) var(--ease-luxury)`,
-              transitionDelay: isMobileOpen ? `${i * 0.06}s` : '0s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-gold)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-heading)'
-            }}
-          >
-            {link.label}
-          </a>
-        ))}
+        {navLinks.map((link, i) => {
+          const isActive = location.pathname === link.href
+          return (
+            <a
+              key={link.label}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '32px',
+                fontWeight: 400,
+                color: isActive ? 'var(--color-gold)' : 'var(--color-heading)',
+                textDecoration: 'none',
+                transform: isMobileOpen ? 'translateY(0)' : 'translateY(20px)',
+                opacity: isMobileOpen ? 1 : 0,
+                transition: `all var(--duration-base) var(--ease-luxury)`,
+                transitionDelay: isMobileOpen ? `${i * 0.06}s` : '0s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-gold)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = isActive ? 'var(--color-gold)' : 'var(--color-heading)'
+              }}
+            >
+              {link.label}
+            </a>
+          )
+        })}
       </div>
 
       {/* Responsive styles */}
